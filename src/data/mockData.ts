@@ -36,6 +36,16 @@ export interface Notification {
   isRead: boolean;
 }
 
+export interface NurseTask {
+  id: string;
+  title: string;
+  bedNumber: string;
+  patientId?: string;
+  priority: 'low' | 'medium' | 'high';
+  dueInMinutes: number;
+  notes?: string;
+}
+
 export const patients: Patient[] = [
   {
     id: 'P001',
@@ -235,6 +245,76 @@ export const notifications: Notification[] = [
     patientName: 'Emily Davis',
     timestamp: new Date(Date.now() - 60 * 60000).toISOString(),
     isRead: true,
+  },
+];
+
+// Nurse assignment mapping and profiles for role-based views
+export const nurseAssignments: Record<string, string[]> = {
+  'nurse@hospital.com': ['ICU-101', 'ICU-104', 'ICU-107'],
+  'nurse1@hospital.com': ['ICU-102', 'ICU-105'],
+};
+
+export const nurseProfiles: {
+  email: string;
+  name: string;
+  phone: string;
+  department: string;
+  shift: string;
+  supervisor: string;
+}[] = [
+  {
+    email: 'nurse@hospital.com',
+    name: 'Alexis Carter, RN',
+    phone: '+1 (555) 214-8877',
+    department: 'Cardiac ICU',
+    shift: 'Day (7a - 7p)',
+    supervisor: 'Dr. John Smith',
+  },
+  {
+    email: 'nurse1@hospital.com',
+    name: 'Priya Nair, RN',
+    phone: '+1 (555) 330-1221',
+    department: 'Respiratory ICU',
+    shift: 'Night (7p - 7a)',
+    supervisor: 'Dr. Sarah Lee',
+  },
+];
+
+export const nurseTasks: NurseTask[] = [
+  {
+    id: 'T001',
+    title: 'Recheck vitals and SpO₂ probe',
+    bedNumber: 'ICU-101',
+    patientId: 'P001',
+    priority: 'high',
+    dueInMinutes: 10,
+    notes: 'Probe reading intermittently low; verify placement.',
+  },
+  {
+    id: 'T002',
+    title: 'Administer scheduled antibiotics',
+    bedNumber: 'ICU-104',
+    patientId: 'P004',
+    priority: 'medium',
+    dueInMinutes: 30,
+    notes: 'Confirm no allergy; log administration time.',
+  },
+  {
+    id: 'T003',
+    title: 'Turn patient and document skin check',
+    bedNumber: 'ICU-107',
+    patientId: 'P007',
+    priority: 'high',
+    dueInMinutes: 45,
+    notes: 'Use two-person assist; check sacrum and heels.',
+  },
+  {
+    id: 'T004',
+    title: 'Update handoff notes for next shift',
+    bedNumber: 'ICU-105',
+    priority: 'low',
+    dueInMinutes: 90,
+    notes: 'Summarize response to respiratory therapy.',
   },
 ];
 

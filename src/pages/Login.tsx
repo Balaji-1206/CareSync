@@ -4,6 +4,7 @@ import { Heart, Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { inferRoleFromEmail, setAuth } from '@/hooks/use-auth';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,7 +14,13 @@ export default function Login() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    const role = inferRoleFromEmail(email);
+    setAuth({ role, email });
+    if (role === 'nurse') {
+      navigate('/nurse/dashboard');
+    } else {
+      navigate('/dashboard');
+    }
   };
 
   return (
@@ -107,7 +114,7 @@ export default function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="doctor@hospital.com"
+                  placeholder="nurse@hospital.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10 h-12"

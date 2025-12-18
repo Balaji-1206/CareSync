@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const navigation = [
+const adminDoctorNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Patients', href: '/patients', icon: Users },
   { name: 'ICU Beds', href: '/beds', icon: BedDouble },
@@ -22,16 +22,86 @@ const navigation = [
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
+const nurseNavigation = [
+  { name: 'Dashboard', href: '/nurse/dashboard', icon: LayoutDashboard },
+  { name: 'Patients', href: '/nurse/patients', icon: Users },
+  { name: 'ICU Beds', href: '/nurse/beds', icon: BedDouble },
+  { name: 'Notifications', href: '/nurse/notifications', icon: Bell },
+  { name: 'Settings', href: '/settings', icon: Settings },
+];
+
+import { getAuth } from '@/hooks/use-auth';
+
 interface AppSidebarProps {
   onLogout: () => void;
 }
 
 export function AppSidebar({ onLogout }: AppSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const location = useLocation();
+  const navigation = useMemo(() => {
+    const auth = getAuth();
+    return auth?.role === 'nurse' ? nurseNavigation : adminDoctorNavigation;
+  }, []);
 
-  const SidebarContent = () => (
+  // Auto-collapse on scroll away, expand on hover
+  useEffect(() => {
+    let scrollTimeout: ReturnType<typeof setTimeout>;
+    let hoverTimeout: ReturnType<typeof setTimeout>;
+    
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isNavigating) return; // Don't expand during navigation
+      
+      const distanceFromLeft = e.clientX;
+      if (distanceFromLeft < 100) {
+        clearTimeout(hoverTimeout);
+        hoverTimeout = setTimeout(() => {
+          setIsHovered(true);
+        }, 150); // Add small delay before expanding
+      } else if (distanceFromLeft > 120) {
+        clearTimeout(hoverTimeout);
+        setIsHovered(false);
+      }
+    };
+
+    const handleScroll = () => {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(() => {
+        setIsHovered(false);
+      }, 2000);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+      clearTimeout(scrollTimeout);
+      clearTimeout(hoverTimeout);
+    };
+  }, [isNavigating]);
+
+  const shouldExpand = isHovered && !isNavigating;
+
+  const handleNavClick = () => {
+    setIsMobileOpen(false);
+    setIsHovered(false);
+    setIsNavigating(true);
+    
+    // Reset navigation state after route change completes
+    // We watch location changes instead of using a fixed timeout
+  };
+
+  // Clear navigating state when location changes
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [location.pathname]);
+
+  const SidebarContent = ({ isCollapsed }: { isCollapsed: boolean }) => (
     <>
       {/* Logo */}
       <div className="flex items-center gap-3 px-4 py-6 border-b border-sidebar-border">
@@ -54,13 +124,14 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
             <NavLink
               key={item.name}
               to={item.href}
-              onClick={() => setIsMobileOpen(false)}
+              onClick={handleNavClick}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200',
                 isActive
                   ? 'bg-sidebar-primary text-sidebar-primary-foreground shadow-md'
                   : 'text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
               )}
+              title={isCollapsed ? item.name : undefined}
             >
               <item.icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'animate-scale-in')} />
               {!isCollapsed && <span>{item.name}</span>}
@@ -92,6 +163,7 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
           className={cn(
             'flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent hover:text-destructive'
           )}
+          title={isCollapsed ? 'Logout' : undefined}
         >
           <LogOut className="h-5 w-5 flex-shrink-0" />
           {!isCollapsed && <span>Logout</span>}
@@ -122,17 +194,19 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
       <aside
         className={cn(
           'fixed left-0 top-0 z-40 hidden h-screen flex-col bg-sidebar transition-all duration-300 lg:flex',
-          isCollapsed ? 'w-[70px]' : 'w-64'
+          shouldExpand ? 'w-64' : 'w-[70px]'
         )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Collapse Toggle */}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={() => setIsHovered(!isHovered)}
           className="absolute -right-3 top-20 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform hover:scale-110"
         >
-          <Menu className={cn('h-3 w-3 transition-transform', isCollapsed && 'rotate-180')} />
+          <Menu className={cn('h-3 w-3 transition-transform', !shouldExpand && 'rotate-180')} />
         </button>
-        <SidebarContent />
+        <SidebarContent isCollapsed={!shouldExpand} />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -142,7 +216,7 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <SidebarContent />
+        <SidebarContent isCollapsed={false} />
       </aside>
     </>
   );
