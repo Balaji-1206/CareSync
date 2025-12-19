@@ -20,6 +20,13 @@ import NurseNotifications from "./pages/nurse/NurseNotifications";
 import NurseSettings from "./pages/nurse/NurseSettings";
 import DoctorSettings from "./pages/doctor/Settings";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import BedManagement from "./pages/admin/BedManagement";
+import SystemMonitoring from "./pages/admin/SystemMonitoring";
+import AlertsMonitoring from "./pages/admin/AlertsMonitoring";
+import ReportsAnalytics from "./pages/admin/ReportsAnalytics";
+import AuditLogs from "./pages/admin/AuditLogs";
+import Announcements from "./pages/admin/Announcements";
 
 const queryClient = new QueryClient();
 
@@ -48,6 +55,13 @@ const App = () => (
           {/* Doctor-specific routes */}
           <Route path="/doctor/settings" element={<DoctorSettings />} />
           {/* Admin-specific routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/beds" element={<BedManagement />} />
+          <Route path="/admin/system" element={<SystemMonitoring />} />
+          <Route path="/admin/alerts" element={<AlertsMonitoring />} />
+          <Route path="/admin/reports" element={<ReportsAnalytics />} />
+          <Route path="/admin/audit" element={<AuditLogs />} />
+          <Route path="/admin/announcements" element={<Announcements />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

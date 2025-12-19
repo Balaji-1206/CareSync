@@ -11,14 +11,22 @@ import {
   Menu,
   X,
   Heart,
+  Server,
+  AlertTriangle,
+  FileBarChart,
+  Shield,
+  Megaphone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const adminNavigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Patients', href: '/patients', icon: Users },
-  { name: 'ICU Beds', href: '/beds', icon: BedDouble },
-  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  { name: 'Bed Management', href: '/admin/beds', icon: BedDouble },
+  { name: 'System Monitor', href: '/admin/system', icon: Server },
+  { name: 'Alerts', href: '/admin/alerts', icon: AlertTriangle },
+  { name: 'Reports', href: '/admin/reports', icon: FileBarChart },
+  { name: 'Audit Logs', href: '/admin/audit', icon: Shield },
+  { name: 'Announcements', href: '/admin/announcements', icon: Megaphone },
   { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
