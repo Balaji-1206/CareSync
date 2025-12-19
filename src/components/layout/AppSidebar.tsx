@@ -14,12 +14,20 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const adminDoctorNavigation = [
+const adminNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Patients', href: '/patients', icon: Users },
   { name: 'ICU Beds', href: '/beds', icon: BedDouble },
   { name: 'Notifications', href: '/notifications', icon: Bell },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Settings', href: '/admin/settings', icon: Settings },
+];
+
+const doctorNavigation = [
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { name: 'Patients', href: '/patients', icon: Users },
+  { name: 'ICU Beds', href: '/beds', icon: BedDouble },
+  { name: 'Notifications', href: '/notifications', icon: Bell },
+  { name: 'Settings', href: '/doctor/settings', icon: Settings },
 ];
 
 const nurseNavigation = [
@@ -27,7 +35,7 @@ const nurseNavigation = [
   { name: 'Patients', href: '/nurse/patients', icon: Users },
   { name: 'ICU Beds', href: '/nurse/beds', icon: BedDouble },
   { name: 'Notifications', href: '/nurse/notifications', icon: Bell },
-  { name: 'Settings', href: '/settings', icon: Settings },
+  { name: 'Settings', href: '/nurse/settings', icon: Settings },
 ];
 
 import { getAuth } from '@/hooks/use-auth';
@@ -44,7 +52,9 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
   const location = useLocation();
   const navigation = useMemo(() => {
     const auth = getAuth();
-    return auth?.role === 'nurse' ? nurseNavigation : adminDoctorNavigation;
+    if (auth?.role === 'nurse') return nurseNavigation;
+    if (auth?.role === 'admin') return adminNavigation;
+    return doctorNavigation;
   }, []);
 
   // Auto-collapse on scroll away, expand on hover

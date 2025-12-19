@@ -17,6 +17,9 @@ import NurseDashboard from "./pages/nurse/NurseDashboard";
 import NurseBeds from "./pages/nurse/NurseBeds";
 import NursePatients from "./pages/nurse/NursePatients";
 import NurseNotifications from "./pages/nurse/NurseNotifications";
+import NurseSettings from "./pages/nurse/NurseSettings";
+import DoctorSettings from "./pages/doctor/Settings";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +44,11 @@ const App = () => (
           <Route path="/nurse/patients" element={<NursePatients />} />
           <Route path="/nurse/beds" element={<NurseBeds />} />
           <Route path="/nurse/notifications" element={<NurseNotifications />} />
+          <Route path="/nurse/settings" element={<NurseSettings />} />
+          {/* Doctor-specific routes */}
+          <Route path="/doctor/settings" element={<DoctorSettings />} />
+          {/* Admin-specific routes */}
+          <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
