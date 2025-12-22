@@ -7,111 +7,122 @@
 
 @layer base {
   :root {
-    /* Medical Blue Theme */
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    /* Vibrant Hospital Theme - Light & Clean */
+    --background: 200 35% 97%;
+    --foreground: 210 30% 20%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 210 30% 20%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 210 30% 20%;
 
-    /* Primary - Medical Blue */
-    --primary: 210 100% 45%;
+    /* Primary - Vibrant Medical Blue */
+    --primary: 205 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    /* Secondary - Soft Blue Gray */
-    --secondary: 210 25% 93%;
-    --secondary-foreground: 215 25% 25%;
+    /* Secondary - Soft Teal */
+    --secondary: 180 35% 92%;
+    --secondary-foreground: 180 50% 30%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 200 30% 94%;
+    --muted-foreground: 210 20% 50%;
 
-    /* Accent - Teal */
-    --accent: 175 70% 40%;
+    /* Accent - Fresh Cyan */
+    --accent: 185 80% 50%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 75% 55%;
+    --destructive: 355 85% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 210 100% 45%;
+    --border: 200 25% 88%;
+    --input: 200 25% 90%;
+    --ring: 205 100% 50%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    /* Medical Status Colors */
-    --status-normal: 145 65% 42%;
-    --status-warning: 38 95% 50%;
-    --status-critical: 0 75% 55%;
-    --status-normal-bg: 145 65% 95%;
-    --status-warning-bg: 38 95% 95%;
-    --status-critical-bg: 0 75% 95%;
+    /* Medical Status Colors - Vibrant */
+    --status-normal: 145 70% 45%;
+    --status-warning: 35 100% 55%;
+    --status-critical: 355 85% 55%;
+    --status-normal-bg: 145 70% 93%;
+    --status-warning-bg: 35 100% 93%;
+    --status-critical-bg: 355 85% 93%;
 
-    /* Vital Signs Colors */
-    --vital-heart: 350 80% 55%;
-    --vital-temp: 25 95% 55%;
-    --vital-bp: 210 100% 50%;
-    --vital-spo2: 175 70% 45%;
-    --vital-ecg: 145 70% 45%;
+    /* Vital Signs Colors - Bright & Clear */
+    --vital-heart: 345 85% 58%;
+    --vital-temp: 30 100% 58%;
+    --vital-bp: 210 100% 55%;
+    --vital-spo2: 180 75% 48%;
+    --vital-ecg: 150 75% 48%;
 
-    /* Sidebar */
-    --sidebar-background: 215 30% 12%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 210 100% 55%;
+    /* Sidebar - Clean White/Light Medical Theme */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 210 30% 25%;
+    --sidebar-primary: 205 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 20%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 215 25% 20%;
-    --sidebar-ring: 210 100% 55%;
+    --sidebar-accent: 200 30% 96%;
+    --sidebar-accent-foreground: 210 30% 25%;
+    --sidebar-border: 200 25% 90%;
+    --sidebar-ring: 205 100% 50%;
 
-    /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210, 100%, 45%), hsl(200, 100%, 40%));
-    --gradient-accent: linear-gradient(135deg, hsl(175, 70%, 40%), hsl(185, 70%, 35%));
-    --gradient-critical: linear-gradient(135deg, hsl(0, 75%, 55%), hsl(350, 80%, 50%));
-    --gradient-success: linear-gradient(135deg, hsl(145, 65%, 42%), hsl(155, 60%, 38%));
+    /* Gradients - Vibrant Medical */
+    --gradient-primary: linear-gradient(135deg, hsl(205, 100%, 50%), hsl(185, 90%, 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(185, 80%, 50%), hsl(175, 85%, 45%));
+    --gradient-critical: linear-gradient(135deg, hsl(355, 85%, 55%), hsl(345, 90%, 50%));
+    --gradient-success: linear-gradient(135deg, hsl(145, 70%, 45%), hsl(160, 70%, 42%));
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(215 25% 15% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(215 25% 15% / 0.07), 0 2px 4px -2px hsl(215 25% 15% / 0.05);
-    --shadow-lg: 0 10px 15px -3px hsl(215 25% 15% / 0.08), 0 4px 6px -4px hsl(215 25% 15% / 0.05);
-    --shadow-glow: 0 0 20px hsl(210 100% 45% / 0.15);
-    --shadow-critical: 0 0 20px hsl(0 75% 55% / 0.3);
+    /* Shadows - Soft & Elevated */
+    --shadow-sm: 0 2px 4px 0 hsl(205 50% 60% / 0.08);
+    --shadow-md: 0 4px 10px -1px hsl(205 50% 55% / 0.12), 0 2px 6px -2px hsl(205 50% 50% / 0.08);
+    --shadow-lg: 0 12px 24px -4px hsl(205 50% 50% / 0.15), 0 6px 12px -6px hsl(205 50% 45% / 0.1);
+    --shadow-glow: 0 0 24px hsl(205 100% 50% / 0.25);
+    --shadow-critical: 0 0 24px hsl(355 85% 55% / 0.35);
   }
 
   .dark {
-    --background: 215 30% 8%;
-    --foreground: 210 20% 95%;
+    /* Optional Dark Mode - Clean Medical Dark */
+    --background: 210 35% 12%;
+    --foreground: 200 20% 95%;
 
-    --card: 215 28% 12%;
-    --card-foreground: 210 20% 95%;
+    --card: 210 30% 16%;
+    --card-foreground: 200 20% 95%;
 
-    --popover: 215 28% 12%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 210 30% 16%;
+    --popover-foreground: 200 20% 95%;
 
-    --primary: 210 100% 55%;
+    --primary: 205 100% 55%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 25% 18%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 210 30% 22%;
+    --secondary-foreground: 200 20% 90%;
 
-    --muted: 215 25% 15%;
-    --muted-foreground: 215 15% 55%;
+    --muted: 210 30% 18%;
+    --muted-foreground: 210 15% 60%;
 
-    --accent: 175 70% 45%;
+    --accent: 185 80% 55%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 50%;
+    --destructive: 355 80% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 25% 18%;
-    --input: 215 25% 18%;
-    --ring: 210 100% 55%;
+    --border: 210 30% 22%;
+    --input: 210 30% 22%;
+    --ring: 205 100% 55%;
 
-    --status-normal-bg: 145 65% 15%;
-    --status-warning-bg: 38 95% 15%;
-    --status-critical-bg: 0 75% 15%;
+    --status-normal-bg: 145 65% 18%;
+    --status-warning-bg: 35 95% 18%;
+    --status-critical-bg: 355 80% 18%;
+
+    /* Sidebar Dark Mode */
+    --sidebar-background: 210 35% 10%;
+    --sidebar-foreground: 200 20% 90%;
+    --sidebar-primary: 205 100% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 30% 18%;
+    --sidebar-accent-foreground: 200 20% 90%;
+    --sidebar-border: 210 30% 18%;
+    --sidebar-ring: 205 100% 55%;
   }
 }
 

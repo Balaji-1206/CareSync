@@ -88,16 +88,20 @@ export default function Login() {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-background">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex items-center justify-center bg-background px-4 py-6 sm:p-8">
+
+        <div className="w-full max-w-md rounded-2xl bg-background lg:bg-transparent p-6 lg:p-0 shadow-lg lg:shadow-none border lg:border-none">
+
           {/* Mobile Logo */}
-          <div className="flex items-center gap-3 mb-8 lg:hidden">
+          <div className="flex flex-col items-center text-center gap-3 mb-8 lg:hidden">
+
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
               <Heart className="h-6 w-6 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Smart ICU</h1>
-              <p className="text-xs text-muted-foreground">Health Monitor</p>
+              <h1 className="text-2xl font-bold text-foreground">Smart ICU</h1>
+<p className="text-sm text-muted-foreground">Health Monitor</p>
+
             </div>
           </div>
 
@@ -106,7 +110,7 @@ export default function Login() {
             <p className="text-muted-foreground mt-2">Sign in to access your dashboard</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
+          <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -117,7 +121,8 @@ export default function Login() {
                   placeholder="nurse@hospital.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12"
+                  className="pl-10 h-14 text-base"
+
                 />
               </div>
             </div>
@@ -137,7 +142,8 @@ export default function Login() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 pr-10 h-12"
+                  className="pl-10 h-14 text-base"
+
                 />
                 <button
                   type="button"
@@ -149,13 +155,18 @@ export default function Login() {
               </div>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base font-medium gap-2">
+           <Button
+  type="submit"
+  className="w-full h-14 text-base font-semibold gap-2 rounded-xl"
+>
+
               Sign In
               <ArrowRight className="h-4 w-4" />
             </Button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+         <p className="mt-8 text-center text-sm text-muted-foreground">
+
             Don't have an account?{' '}
             <Link to="/signup" className="font-medium text-primary hover:underline">
               Create account

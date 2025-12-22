@@ -18,6 +18,7 @@ import {
   Megaphone,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useSidebar } from '@/contexts/SidebarContext';
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -57,6 +58,7 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
+  const { setIsExpanded } = useSidebar();
   const location = useLocation();
   const navigation = useMemo(() => {
     const auth = getAuth();
@@ -104,6 +106,11 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
   }, [isNavigating]);
 
   const shouldExpand = isHovered && !isNavigating;
+
+  // Sync expansion state to context
+  useEffect(() => {
+    setIsExpanded(shouldExpand);
+  }, [shouldExpand, setIsExpanded]);
 
   const handleNavClick = () => {
     setIsMobileOpen(false);
@@ -217,13 +224,7 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Collapse Toggle */}
-        <button
-          onClick={() => setIsHovered(!isHovered)}
-          className="absolute -right-3 top-20 z-50 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md transition-transform hover:scale-110"
-        >
-          <Menu className={cn('h-3 w-3 transition-transform', !shouldExpand && 'rotate-180')} />
-        </button>
+        
         <SidebarContent isCollapsed={!shouldExpand} />
       </aside>
 

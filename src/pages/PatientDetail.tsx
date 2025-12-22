@@ -11,6 +11,8 @@ import {
   User,
   BedDouble,
   Clock,
+  Cpu,
+  Wifi,
 } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Button } from '@/components/ui/button';
@@ -19,11 +21,21 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { ECGChart } from '@/components/charts/ECGChart';
 import { VitalChart } from '@/components/charts/VitalChart';
 import { patients, generateVitalHistory } from '@/data/mockData';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function PatientDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [vitalHistory, setVitalHistory] = useState(generateVitalHistory(24));
+  const deviceInfo = {
+    deviceId: `DEV-${id ?? 'UNKNOWN'}`,
+    deviceType: 'ICU Vital Monitoring Unit',
+    microcontroller: 'ESP32',
+    connectionStatus: Math.random() > 0.2 ? 'online' as const : 'offline' as const,
+    sensors: ['HR', 'SpO₂', 'Temp', 'BP'],
+    lastUpdate: new Date(Date.now() - Math.floor(Math.random() * 5 * 60 * 1000)),
+  };
 
   const patient = patients.find((p) => p.id === id);
 
@@ -50,6 +62,18 @@ export default function PatientDetail() {
       </MainLayout>
     );
   }
+
+  const formatDuration = (ms: number) => {
+    const totalMinutes = Math.floor(ms / (1000 * 60));
+    const days = Math.floor(totalMinutes / (60 * 24));
+    const hours = Math.floor((totalMinutes % (60 * 24)) / 60);
+    const minutes = totalMinutes % 60;
+    const parts: string[] = [];
+    if (days) parts.push(`${days}d`);
+    if (hours || days) parts.push(`${hours}h`);
+    parts.push(`${minutes}m`);
+    return parts.join(' ');
+  };
 
   const getVitalStatus = (vital: string, value: number) => {
     switch (vital) {
@@ -120,6 +144,50 @@ export default function PatientDetail() {
             </div>
           </div>
         </div>
+
+        {/* Monitoring Device */}
+        <Card className="mb-8">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base">Monitoring Device</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col gap-3">
+              {/* Compact info row */}
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Activity className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">ID:</span>
+                  <span className="font-mono font-medium">{deviceInfo.deviceId}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Gauge className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Type:</span>
+                  <span className="font-medium">{deviceInfo.deviceType}</span>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  <Wifi className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Status:</span>
+                  <span className={`font-medium ${deviceInfo.connectionStatus === 'online' ? 'text-status-normal' : 'text-status-critical'}`}>
+                    {deviceInfo.connectionStatus === 'online' ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Sensors left, Last update right */}
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap items-center gap-2">
+                  {deviceInfo.sensors.map((s) => (
+                    <Badge key={s} variant="outline" className="font-normal">
+                      {s}
+                    </Badge>
+                  ))}
+                </div>
+                
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Vitals Grid */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
