@@ -9,6 +9,7 @@ export interface Patient {
   status: PatientStatus;
   admissionDate: string;
   diagnosis: string;
+  deviceBattery?: number; // Battery percentage (0-100)
   vitals: {
     heartRate: number;
     temperature: number;
@@ -56,6 +57,7 @@ export const patients: Patient[] = [
     status: 'normal',
     admissionDate: '2024-01-10',
     diagnosis: 'Post-cardiac surgery recovery',
+    deviceBattery: 85,
     vitals: {
       heartRate: 72,
       temperature: 36.8,
@@ -73,6 +75,7 @@ export const patients: Patient[] = [
     status: 'warning',
     admissionDate: '2024-01-12',
     diagnosis: 'Respiratory distress syndrome',
+    deviceBattery: 45,
     vitals: {
       heartRate: 95,
       temperature: 37.8,
@@ -90,6 +93,7 @@ export const patients: Patient[] = [
     status: 'critical',
     admissionDate: '2024-01-14',
     diagnosis: 'Acute myocardial infarction',
+    deviceBattery: 92,
     vitals: {
       heartRate: 110,
       temperature: 38.5,
@@ -107,6 +111,7 @@ export const patients: Patient[] = [
     status: 'normal',
     admissionDate: '2024-01-08',
     diagnosis: 'Post-stroke monitoring',
+    deviceBattery: 68,
     vitals: {
       heartRate: 68,
       temperature: 36.5,
@@ -124,6 +129,7 @@ export const patients: Patient[] = [
     status: 'warning',
     admissionDate: '2024-01-13',
     diagnosis: 'Severe pneumonia',
+    deviceBattery: 22,
     vitals: {
       heartRate: 88,
       temperature: 38.2,
@@ -141,6 +147,7 @@ export const patients: Patient[] = [
     status: 'normal',
     admissionDate: '2024-01-11',
     diagnosis: 'Post-surgical recovery',
+    deviceBattery: 95,
     vitals: {
       heartRate: 75,
       temperature: 36.9,
@@ -158,6 +165,7 @@ export const patients: Patient[] = [
     status: 'critical',
     admissionDate: '2024-01-15',
     diagnosis: 'Septic shock',
+    deviceBattery: 58,
     vitals: {
       heartRate: 125,
       temperature: 39.2,
@@ -175,11 +183,48 @@ export const patients: Patient[] = [
     status: 'normal',
     admissionDate: '2024-01-09',
     diagnosis: 'Diabetic ketoacidosis recovery',
+    deviceBattery: 78,
     vitals: {
       heartRate: 70,
       temperature: 36.7,
       bloodPressure: { systolic: 122, diastolic: 82 },
       spo2: 96,
+      lastUpdated: new Date().toISOString(),
+    },
+  },
+  {
+    id: 'P009',
+    name: 'Olivia Martin',
+    age: 61,
+    gender: 'Female',
+    bedNumber: 'ICU-109',
+    status: 'warning',
+    admissionDate: '2024-01-15',
+    diagnosis: 'COPD Exacerbation',
+    deviceBattery: 18,
+    vitals: {
+      heartRate: 102,
+      temperature: 37.9,
+      bloodPressure: { systolic: 145, diastolic: 92 },
+      spo2: 90,
+      lastUpdated: new Date().toISOString(),
+    },
+  },
+  {
+    id: 'P010',
+    name: 'Daniel Park',
+    age: 47,
+    gender: 'Male',
+    bedNumber: 'ICU-110',
+    status: 'normal',
+    admissionDate: '2024-01-16',
+    diagnosis: 'Post-operative monitoring',
+    deviceBattery: 100,
+    vitals: {
+      heartRate: 76,
+      temperature: 36.6,
+      bloodPressure: { systolic: 122, diastolic: 81 },
+      spo2: 99,
       lastUpdated: new Date().toISOString(),
     },
   },
@@ -194,8 +239,8 @@ export const icuBeds: ICUBed[] = [
   { id: 'B006', bedNumber: 'ICU-106', isOccupied: true, patientId: 'P006', ward: 'Surgical ICU' },
   { id: 'B007', bedNumber: 'ICU-107', isOccupied: true, patientId: 'P007', ward: 'General ICU' },
   { id: 'B008', bedNumber: 'ICU-108', isOccupied: true, patientId: 'P008', ward: 'Medical ICU' },
-  { id: 'B009', bedNumber: 'ICU-109', isOccupied: false, ward: 'General ICU' },
-  { id: 'B010', bedNumber: 'ICU-110', isOccupied: false, ward: 'Cardiac ICU' },
+  { id: 'B009', bedNumber: 'ICU-109', isOccupied: true, patientId: 'P009', ward: 'General ICU' },
+  { id: 'B010', bedNumber: 'ICU-110', isOccupied: true, patientId: 'P010', ward: 'Cardiac ICU' },
   { id: 'B011', bedNumber: 'ICU-111', isOccupied: false, ward: 'Surgical ICU' },
   { id: 'B012', bedNumber: 'ICU-112', isOccupied: false, ward: 'Neuro ICU' },
 ];
@@ -251,7 +296,7 @@ export const notifications: Notification[] = [
 // Nurse assignment mapping and profiles for role-based views
 export const nurseAssignments: Record<string, string[]> = {
   'nurse@hospital.com': ['ICU-101', 'ICU-104', 'ICU-107'],
-  'nurse1@hospital.com': ['ICU-102', 'ICU-105'],
+  'nurse1@hospital.com': ['ICU-102', 'ICU-105', 'ICU-109', 'ICU-110'],
 };
 
 export const nurseProfiles: {

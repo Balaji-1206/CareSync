@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, ChevronRight } from 'lucide-react';
+import { Search, Filter, ChevronRight, Battery, BatteryLow, BatteryMedium, BatteryFull } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/ui/status-badge';
@@ -13,6 +13,19 @@ export default function NursePatients() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<PatientStatus | 'all'>('all');
   const auth = getAuth();
+
+  const getBatteryIcon = (battery: number) => {
+    if (battery >= 80) return BatteryFull;
+    if (battery >= 40) return BatteryMedium;
+    if (battery >= 20) return BatteryLow;
+    return Battery;
+  };
+
+  const getBatteryColor = (battery: number) => {
+    if (battery >= 60) return 'text-green-500';
+    if (battery >= 30) return 'text-yellow-500';
+    return 'text-red-500';
+  };
 
   const assignedBedNumbers = useMemo(() => nurseAssignments[auth?.email || 'nurse@hospital.com'] || [], [auth]);
   const patients = useMemo(() => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)), [assignedBedNumbers]);
@@ -86,6 +99,7 @@ export default function NursePatients() {
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Age / Gender</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">ICU Bed</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Status</th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Device</th>
                   <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Vitals</th>
                   <th className="px-6 py-4"></th>
                 </tr>
@@ -108,6 +122,40 @@ export default function NursePatients() {
                     <td className="px-6 py-4"><span className="text-sm text-foreground">{patient.age} yrs / {patient.gender}</span></td>
                     <td className="px-6 py-4"><span className="inline-flex items-center rounded-md bg-secondary px-2 py-1 text-sm font-medium">{patient.bedNumber}</span></td>
                     <td className="px-6 py-4"><StatusBadge status={patient.status} showPulse={patient.status === 'critical'} /></td>
+                    <td className="px-6 py-4">
+                      {patient.deviceBattery !== undefined && (() => {
+                        const BatteryIcon = getBatteryIcon(patient.deviceBattery);
+                        return (
+                          <div className="flex items-center gap-2">
+                            <div className="relative">
+                              <BatteryIcon className={cn('h-6 w-6', getBatteryColor(patient.deviceBattery))} />
+                              {patient.deviceBattery < 20 && (
+                                <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                </span>
+                              )}
+                            </div>
+                            <div className="flex flex-col">
+                              <span className={cn('text-xs font-semibold', getBatteryColor(patient.deviceBattery))}>
+                                {patient.deviceBattery}%
+                              </span>
+                              <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden mt-0.5">
+                                <div
+                                  className={cn(
+                                    'h-full rounded-full transition-all',
+                                    patient.deviceBattery >= 60 ? 'bg-green-500' :
+                                    patient.deviceBattery >= 30 ? 'bg-yellow-500' :
+                                    'bg-red-500'
+                                  )}
+                                  style={{ width: `${patient.deviceBattery}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4 text-xs">
                         <div><span className="text-muted-foreground">HR: </span><span className="font-mono font-medium">{patient.vitals.heartRate}</span></div>
