@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+  :root {
+    /* Vibrant Hospital Theme - Light & Clean */
+    --background: 200 35% 97%;
+    --foreground: 210 30% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 30% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 30% 20%;
+
+    /* Primary - Vibrant Medical Blue */
+    --primary: 205 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Soft Teal */
+    --secondary: 180 35% 92%;
+    --secondary-foreground: 180 50% 30%;
+
+    --muted: 200 30% 94%;
+    --muted-foreground: 210 20% 50%;
+
+    /* Accent - Fresh Cyan */
+    --accent: 185 80% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 355 85% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 200 25% 88%;
+    --input: 200 25% 90%;
+    --ring: 205 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Medical Status Colors - Vibrant */
+    --status-normal: 145 70% 45%;
+    --status-warning: 35 100% 55%;
+    --status-critical: 355 85% 55%;
+    --status-normal-bg: 145 70% 93%;
+    --status-warning-bg: 35 100% 93%;
+    --status-critical-bg: 355 85% 93%;
+
+    /* Vital Signs Colors - Bright & Clear */
+    --vital-heart: 345 85% 58%;
+    --vital-temp: 30 100% 58%;
+    --vital-bp: 210 100% 55%;
+    --vital-spo2: 180 75% 48%;
+    --vital-ecg: 150 75% 48%;
+
+    /* Sidebar - Clean White/Light Medical Theme */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 210 30% 25%;
+    --sidebar-primary: 205 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 200 30% 96%;
+    --sidebar-accent-foreground: 210 30% 25%;
+    --sidebar-border: 200 25% 90%;
+    --sidebar-ring: 205 100% 50%;
+
+    /* Gradients - Vibrant Medical */
+    --gradient-primary: linear-gradient(135deg, hsl(205, 100%, 50%), hsl(185, 90%, 45%));
+    --gradient-accent: linear-gradient(135deg, hsl(185, 80%, 50%), hsl(175, 85%, 45%));
+    --gradient-critical: linear-gradient(135deg, hsl(355, 85%, 55%), hsl(345, 90%, 50%));
+    --gradient-success: linear-gradient(135deg, hsl(145, 70%, 45%), hsl(160, 70%, 42%));
+
+    /* Shadows - Soft & Elevated */
+    --shadow-sm: 0 2px 4px 0 hsl(205 50% 60% / 0.08);
+    --shadow-md: 0 4px 10px -1px hsl(205 50% 55% / 0.12), 0 2px 6px -2px hsl(205 50% 50% / 0.08);
+    --shadow-lg: 0 12px 24px -4px hsl(205 50% 50% / 0.15), 0 6px 12px -6px hsl(205 50% 45% / 0.1);
+    --shadow-glow: 0 0 24px hsl(205 100% 50% / 0.25);
+    --shadow-critical: 0 0 24px hsl(355 85% 55% / 0.35);
+  }
+
+  .dark {
+    /* Optional Dark Mode - Clean Medical Dark */
+    --background: 210 35% 12%;
+    --foreground: 200 20% 95%;
+
+    --card: 210 30% 16%;
+    --card-foreground: 200 20% 95%;
+
+    --popover: 210 30% 16%;
+    --popover-foreground: 200 20% 95%;
+
+    --primary: 205 100% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 210 30% 22%;
+    --secondary-foreground: 200 20% 90%;
+
+    --muted: 210 30% 18%;
+    --muted-foreground: 210 15% 60%;
+
+    --accent: 185 80% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 355 80% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 30% 22%;
+    --input: 210 30% 22%;
+    --ring: 205 100% 55%;
+
+    --status-normal-bg: 145 65% 18%;
+    --status-warning-bg: 35 95% 18%;
+    --status-critical-bg: 355 80% 18%;
+
+    /* Sidebar Dark Mode */
+    --sidebar-background: 210 35% 10%;
+    --sidebar-foreground: 200 20% 90%;
+    --sidebar-primary: 205 100% 55%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 30% 18%;
+    --sidebar-accent-foreground: 200 20% 90%;
+    --sidebar-border: 210 30% 18%;
+    --sidebar-ring: 205 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer components {
+  .vital-card {
+    @apply relative overflow-hidden rounded-xl bg-card p-4 shadow-md transition-all duration-300;
+  }
+
+  .vital-card:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+  }
+
+  .status-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium;
+  }
+
+  .status-normal {
+    @apply bg-[hsl(var(--status-normal-bg))] text-[hsl(var(--status-normal))];
+  }
+
+  .status-warning {
+    @apply bg-[hsl(var(--status-warning-bg))] text-[hsl(var(--status-warning))];
+  }
+
+  .status-critical {
+    @apply bg-[hsl(var(--status-critical-bg))] text-[hsl(var(--status-critical))];
+  }
+
+  .pulse-animation {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .ecg-line {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: ecg-draw 3s linear infinite;
+  }
+}
+
+@layer utilities {
+  .text-gradient-primary {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes ecg-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes blink {
+  0%, 50%, 100% {
+    opacity: 1;
+  }
+  25%, 75% {
+    opacity: 0.3;
+  }
+}
+
+.blink-critical {
+  animation: blink 1s ease-in-out infinite;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
