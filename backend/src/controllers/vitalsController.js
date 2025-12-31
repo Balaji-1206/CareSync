@@ -12,6 +12,7 @@
 const VitalReading = require('../models/VitalReading');
 const vitalCache = require('../utils/vitalCache');
 const { combinedAnalysis } = require('../utils/mockModels');
+const { applyClinicalOverrides, getClinicalOverrideReason } = require('../utils/clinicalOverrides');
 
 // Track EWS timers per patient
 const ewsTimers = {}; // { patientId: intervalId }
@@ -136,9 +137,32 @@ async function calculateAndSaveEWS(patientId) {
     // Step 3: Get historical data for trend analysis
     const recentHistory = historicalData[patientId] || [];
 
-    // Step 4: Run 3-layer analysis
-    console.log(`🧠 [EWS] Running analysis for ${patientId}...`);
-    const analysis = combinedAnalysis(currentVitals, recentHistory);
+    // Step 4: Apply Clinical Override Rules BEFORE ML Model
+    console.log(`🏥 [Clinical Check] Applying safety rules for ${patientId}...`);
+    const clinicalOverride = applyClinicalOverrides(currentVitals);
+    
+    let analysis;
+    
+    if (clinicalOverride) {
+      // Clinical override triggered - bypass ML model for safety
+      const reason = getClinicalOverrideReason(currentVitals);
+      console.log(`✋ [Clinical Override] ${clinicalOverride} status applied - ${reason}`);
+      
+      // Create override analysis result (ML models not used)
+      analysis = {
+        EWS: clinicalOverride,
+        Anomaly: clinicalOverride === 'Critical' ? 'Abnormal' : 'Normal',
+        Trend: 'Stable', // Trend not relevant for immediate clinical overrides
+        Final_Status: clinicalOverride === 'Critical' ? 'High Risk' : 'Monitor',
+        override: true,
+        overrideReason: reason
+      };
+    } else {
+      // No clinical override - proceed with ML model analysis
+      console.log(`🧠 [EWS] Running ML analysis for ${patientId}...`);
+      analysis = combinedAnalysis(currentVitals, recentHistory);
+      analysis.override = false;
+    }
 
     // Step 5: Store in historical data (keep last 30 points)
     recentHistory.push({
@@ -168,7 +192,9 @@ async function calculateAndSaveEWS(patientId) {
       calculation: {
         EWS: {
           result: analysis.EWS,
-          timestamp: new Date()
+          timestamp: new Date(),
+          clinicalOverride: analysis.override || false,
+          overrideReason: analysis.overrideReason || null
         },
         Anomaly: {
           result: analysis.Anomaly,
@@ -185,8 +211,13 @@ async function calculateAndSaveEWS(patientId) {
 
     await vitalReading.save();
 
-    console.log(`✅ [EWS Result] Patient: ${patientId}`);
-    console.log(`   EWS: ${analysis.EWS} | Anomaly: ${analysis.Anomaly} | Trend: ${analysis.Trend} | Status: ${analysis.Final_Status}`);
+    if (analysis.override) {
+      console.log(`✅ [Clinical Override Applied] Patient: ${patientId}`);
+      console.log(`   Status: ${analysis.EWS} | Reason: ${analysis.overrideReason}`);
+    } else {
+      console.log(`✅ [ML Analysis Complete] Patient: ${patientId}`);
+      console.log(`   EWS: ${analysis.EWS} | Anomaly: ${analysis.Anomaly} | Trend: ${analysis.Trend} | Status: ${analysis.Final_Status}`);
+    }
 
   } catch (error) {
     console.error(`[EWS Error] Patient ${patientId}:`, error.message);
