@@ -1,0 +1,207 @@
+{
+  "info": {
+    "_postman_id": "caresync-vitals",
+    "name": "CareSync Vitals API",
+    "description": "API endpoints for CareSync medical vital monitoring system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Send Vital Data",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"507f1f77bcf86cd799439011\",\n  \"vitals\": {\n    \"HR\": {\n      \"value\": 82,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"SpO2\": {\n      \"value\": 96,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Temp\": {\n      \"value\": 37.1,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"RR\": {\n      \"value\": 18,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Fall\": {\n      \"value\": 0,\n      \"time\": \"{{$timestamp}}\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/data",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "data"]
+        },
+        "description": "Send vital reading data from sensors. Triggers cache update and starts EWS timer."
+      },
+      "response": []
+    },
+    {
+      "name": "Get Latest Vitals",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/latest/507f1f77bcf86cd799439011",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "latest", "507f1f77bcf86cd799439011"]
+        },
+        "description": "Get the latest cached vital readings for a patient (immediate response)"
+      },
+      "response": []
+    },
+    {
+      "name": "Get EWS Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/ews-status/507f1f77bcf86cd799439011",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "ews-status", "507f1f77bcf86cd799439011"]
+        },
+        "description": "Get the latest EWS calculation result (wait 5+ seconds after sending data)"
+      },
+      "response": []
+    },
+    {
+      "name": "Get Vital History",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/history/507f1f77bcf86cd799439011?limit=50",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "history", "507f1f77bcf86cd799439011"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "description": "Get historical vital readings stored in database"
+      },
+      "response": []
+    },
+    {
+      "name": "Test - Normal Vitals",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"507f1f77bcf86cd799439011\",\n  \"vitals\": {\n    \"HR\": {\n      \"value\": 72,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"SpO2\": {\n      \"value\": 98,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Temp\": {\n      \"value\": 36.8,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"RR\": {\n      \"value\": 16,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Fall\": {\n      \"value\": 0,\n      \"time\": \"{{$timestamp}}\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/data",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "data"]
+        },
+        "description": "Test with normal vital values. Expected: EWS=Normal, Status=Stable"
+      },
+      "response": []
+    },
+    {
+      "name": "Test - Warning Vitals (High HR)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"507f1f77bcf86cd799439011\",\n  \"vitals\": {\n    \"HR\": {\n      \"value\": 130,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"SpO2\": {\n      \"value\": 95,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Temp\": {\n      \"value\": 37.2,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"RR\": {\n      \"value\": 18,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Fall\": {\n      \"value\": 0,\n      \"time\": \"{{$timestamp}}\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/data",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "data"]
+        },
+        "description": "Test with high heart rate. Expected: EWS=Warning, Status=Monitor"
+      },
+      "response": []
+    },
+    {
+      "name": "Test - Critical Vitals (Fall Detected)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"507f1f77bcf86cd799439011\",\n  \"vitals\": {\n    \"HR\": {\n      \"value\": 95,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"SpO2\": {\n      \"value\": 94,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Temp\": {\n      \"value\": 37.0,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"RR\": {\n      \"value\": 20,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Fall\": {\n      \"value\": 1,\n      \"time\": \"{{$timestamp}}\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/data",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "data"]
+        },
+        "description": "Test with fall detected. Expected: EWS=Critical, Anomaly=Abnormal, Status=High Risk"
+      },
+      "response": []
+    },
+    {
+      "name": "Test - Critical Vitals (Low SpO2)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"patientId\": \"507f1f77bcf86cd799439011\",\n  \"vitals\": {\n    \"HR\": {\n      \"value\": 75,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"SpO2\": {\n      \"value\": 85,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Temp\": {\n      \"value\": 37.0,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"RR\": {\n      \"value\": 16,\n      \"time\": \"{{$timestamp}}\"\n    },\n    \"Fall\": {\n      \"value\": 0,\n      \"time\": \"{{$timestamp}}\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/vitals/data",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "vitals", "data"]
+        },
+        "description": "Test with low oxygen saturation. Expected: EWS=Critical, Status=High Risk"
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api/vitals",
+      "type": "string"
+    },
+    {
+      "key": "patient_id",
+      "value": "507f1f77bcf86cd799439011",
+      "type": "string",
+      "description": "Replace with actual patient ID from your database"
+    }
+  ]
+}

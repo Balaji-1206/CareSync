@@ -6,6 +6,7 @@ const session = require('express-session');
 const connectDB = require('./config/db');
 const passport = require('./config/passport');
 const authRoutes = require('./routes/authRoutes');
+const vitalsRoutes = require('./routes/vitalsRoutes');
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use(passport.session());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/vitals', vitalsRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -62,6 +64,7 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
+      vitals: '/api/vitals',
       health: '/health'
     }
   });
