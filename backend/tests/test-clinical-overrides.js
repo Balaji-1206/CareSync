@@ -33,28 +33,43 @@ const testCases = [
     expected: 'Critical'
   },
   {
-    name: 'Tachypnea (RR > 24)',
+    name: 'Tachypnea (RR > 25)',
     vitals: { HR: 75, SpO2: 98, Temp: 37.0, RR: 28, Fall: 0 },
     expected: 'Critical'
   },
   {
-    name: 'Bradycardia (HR < 60)',
-    vitals: { HR: 55, SpO2: 98, Temp: 37.0, RR: 16, Fall: 0 },
-    expected: 'Warning'
+    name: 'Severe Bradycardia (HR < 50)',
+    vitals: { HR: 45, SpO2: 98, Temp: 37.0, RR: 16, Fall: 0 },
+    expected: 'Critical'
   },
   {
-    name: 'Tachycardia (HR > 100)',
-    vitals: { HR: 115, SpO2: 98, Temp: 37.0, RR: 16, Fall: 0 },
-    expected: 'Warning'
+    name: 'Severe Tachycardia (HR > 130)',
+    vitals: { HR: 140, SpO2: 98, Temp: 37.0, RR: 16, Fall: 0 },
+    expected: 'Critical'
   },
   {
-    name: 'Fever (Temp >= 38.0)',
+    name: 'High Fever (Temp >= 39.0)',
+    vitals: { HR: 75, SpO2: 98, Temp: 39.5, RR: 16, Fall: 0 },
+    expected: 'Critical'
+  },
+  {
+    name: 'Borderline HR (60 bpm) - Should NOT trigger',
+    vitals: { HR: 60, SpO2: 98, Temp: 37.0, RR: 16, Fall: 0 },
+    expected: null
+  },
+  {
+    name: 'Borderline HR (100 bpm) - Should NOT trigger',
+    vitals: { HR: 100, SpO2: 98, Temp: 37.0, RR: 16, Fall: 0 },
+    expected: null
+  },
+  {
+    name: 'Moderate Fever (38.5°C) - Should NOT trigger',
     vitals: { HR: 75, SpO2: 98, Temp: 38.5, RR: 16, Fall: 0 },
-    expected: 'Warning'
+    expected: null
   },
   {
     name: 'Multiple Critical Conditions',
-    vitals: { HR: 45, SpO2: 85, Temp: 39.0, RR: 8, Fall: 1 },
+    vitals: { HR: 45, SpO2: 85, Temp: 40.0, RR: 8, Fall: 1 },
     expected: 'Critical'
   }
 ];

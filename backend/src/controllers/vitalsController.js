@@ -11,7 +11,7 @@
 
 const VitalReading = require('../models/VitalReading');
 const vitalCache = require('../utils/vitalCache');
-const { combinedAnalysis } = require('../utils/mockModels');
+const { combinedAnalysis } = require('../utils/mlModels'); // Changed from mockModels to mlModels
 const { applyClinicalOverrides, getClinicalOverrideReason } = require('../utils/clinicalOverrides');
 
 // Track EWS timers per patient
@@ -137,31 +137,60 @@ async function calculateAndSaveEWS(patientId) {
     // Step 3: Get historical data for trend analysis
     const recentHistory = historicalData[patientId] || [];
 
-    // Step 4: Apply Clinical Override Rules BEFORE ML Model
+    // ==========================================
+    // PRIORITY-BASED DECISION SYSTEM
+    // ==========================================
+    // Priority 1: Clinical Override (Safety First)
+    // Priority 2: EWS Classifier
+    // Priority 3: Anomaly Detector
+    // Priority 4: Trend Analysis
+    // ==========================================
+
+    // PRIORITY 1: Apply Clinical Override Rules BEFORE ML Models
     console.log(`🏥 [Clinical Check] Applying safety rules for ${patientId}...`);
     const clinicalOverride = applyClinicalOverrides(currentVitals);
     
     let analysis;
     
     if (clinicalOverride) {
-      // Clinical override triggered - bypass ML model for safety
+      // Clinical override triggered - STOP and return Critical immediately
       const reason = getClinicalOverrideReason(currentVitals);
-      console.log(`✋ [Clinical Override] ${clinicalOverride} status applied - ${reason}`);
+      console.log(`🚨 [PRIORITY 1: Clinical Override] ${clinicalOverride} status - ${reason}`);
+      console.log(`✋ [Override] Skipping ML models - patient safety priority`);
       
-      // Create override analysis result (ML models not used)
+      // Create override result (NO ML models consulted)
       analysis = {
         EWS: clinicalOverride,
-        Anomaly: clinicalOverride === 'Critical' ? 'Abnormal' : 'Normal',
-        Trend: 'Stable', // Trend not relevant for immediate clinical overrides
-        Final_Status: clinicalOverride === 'Critical' ? 'High Risk' : 'Monitor',
+        Anomaly: 'Not Evaluated', // Skipped due to clinical override
+        Trend: 'Not Evaluated',   // Skipped due to clinical override
+        Final_Status: 'Critical',
         override: true,
-        overrideReason: reason
+        overrideReason: reason,
+        decisionPriority: 'Clinical Override (Priority 1)'
       };
     } else {
       // No clinical override - proceed with ML model analysis
-      console.log(`🧠 [EWS] Running ML analysis for ${patientId}...`);
+      console.log(`✅ [Clinical Check] Passed - proceeding to ML models`);
+      
+      // PRIORITY 2 & 3: Run EWS and Anomaly Models
+      console.log(`🧠 [ML Analysis] Running EWS and Anomaly models for ${patientId}...`);
       analysis = combinedAnalysis(currentVitals, recentHistory);
       analysis.override = false;
+      
+      // Determine which priority level made the final decision
+      if (analysis.EWS === 'Critical') {
+        analysis.decisionPriority = 'EWS Critical (Priority 2)';
+      } else if (analysis.EWS === 'Warning') {
+        analysis.decisionPriority = 'EWS Warning (Priority 2)';
+      } else if (analysis.Anomaly === 'Abnormal') {
+        analysis.decisionPriority = 'Anomaly Detected (Priority 3)';
+      } else if (analysis.Trend === 'Declining') {
+        analysis.decisionPriority = 'Declining Trend (Priority 4)';
+      } else {
+        analysis.decisionPriority = 'All Normal (Priority 4)';
+      }
+      
+      console.log(`📊 [Decision] ${analysis.decisionPriority}`);
     }
 
     // Step 5: Store in historical data (keep last 30 points)
@@ -211,12 +240,17 @@ async function calculateAndSaveEWS(patientId) {
 
     await vitalReading.save();
 
+    // Enhanced logging with priority information
     if (analysis.override) {
-      console.log(`✅ [Clinical Override Applied] Patient: ${patientId}`);
-      console.log(`   Status: ${analysis.EWS} | Reason: ${analysis.overrideReason}`);
+      console.log(`✅ [CRITICAL OVERRIDE] Patient: ${patientId}`);
+      console.log(`   🚨 Status: ${analysis.Final_Status}`);
+      console.log(`   📋 Reason: ${analysis.overrideReason}`);
+      console.log(`   🎯 Decision: ${analysis.decisionPriority}`);
     } else {
-      console.log(`✅ [ML Analysis Complete] Patient: ${patientId}`);
-      console.log(`   EWS: ${analysis.EWS} | Anomaly: ${analysis.Anomaly} | Trend: ${analysis.Trend} | Status: ${analysis.Final_Status}`);
+      console.log(`✅ [ML ANALYSIS COMPLETE] Patient: ${patientId}`);
+      console.log(`   📊 EWS: ${analysis.EWS} | Anomaly: ${analysis.Anomaly} | Trend: ${analysis.Trend}`);
+      console.log(`   🎯 Final Status: ${analysis.Final_Status}`);
+      console.log(`   📌 Decision: ${analysis.decisionPriority}`);
     }
 
   } catch (error) {

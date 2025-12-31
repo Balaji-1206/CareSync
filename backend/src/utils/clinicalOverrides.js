@@ -35,26 +35,21 @@ function applyClinicalOverrides(vitals) {
   }
 
   // Severe Respiratory Distress
-  if (RR < 10 || RR > 24) {
-    console.log(`🚨 [Clinical Override] CRITICAL: RR = ${RR} (< 10 or > 24)`);
+  if (RR < 10 || RR > 25) {
+    console.log(`🚨 [Clinical Override] CRITICAL: RR = ${RR} (< 10 or > 25)`);
     return 'Critical';
   }
 
-  // ==========================================
-  // WARNING OVERRIDES - Require Clinical Attention
-  // These conditions return Warning before ML evaluation
-  // ==========================================
-
-  // Abnormal Heart Rate
-  if (HR < 60 || HR > 100) {
-    console.log(`⚠️ [Clinical Override] WARNING: HR = ${HR} (< 60 or > 100)`);
-    return 'Warning';
+  // Extreme Heart Rate - Critical cardiac conditions
+  if (HR < 50 || HR > 130) {
+    console.log(`🚨 [Clinical Override] CRITICAL: HR = ${HR} (< 50 or > 130)`);
+    return 'Critical';
   }
 
-  // Fever Detection
-  if (Temp >= 38.0) {
-    console.log(`⚠️ [Clinical Override] WARNING: Temp = ${Temp}°C (>= 38.0°C)`);
-    return 'Warning';
+  // High Fever - Severe infection/inflammation
+  if (Temp >= 39.0) {
+    console.log(`🚨 [Clinical Override] CRITICAL: Temp = ${Temp}°C (>= 39.0°C)`);
+    return 'Critical';
   }
 
   // No override needed - proceed to ML model
@@ -79,19 +74,17 @@ function getClinicalOverrideReason(vitals) {
   if (RR < 10) {
     return `Bradypnea (RR: ${RR}) - respiratory failure risk`;
   }
-  if (RR > 24) {
+  if (RR > 25) {
     return `Tachypnea (RR: ${RR}) - respiratory distress`;
   }
-
-  // Check warning conditions
-  if (HR < 60) {
-    return `Bradycardia (HR: ${HR}) - cardiac monitoring required`;
+  if (HR < 50) {
+    return `Severe bradycardia (HR: ${HR}) - cardiac emergency`;
   }
-  if (HR > 100) {
-    return `Tachycardia (HR: ${HR}) - cardiac monitoring required`;
+  if (HR > 130) {
+    return `Severe tachycardia (HR: ${HR}) - cardiac emergency`;
   }
-  if (Temp >= 38.0) {
-    return `Fever (Temp: ${Temp}°C) - infection or inflammation`;
+  if (Temp >= 39.0) {
+    return `High fever (Temp: ${Temp}°C) - severe infection risk`;
   }
 
   return 'No clinical override applied';
