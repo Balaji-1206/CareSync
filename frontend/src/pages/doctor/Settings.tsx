@@ -39,10 +39,8 @@ export default function DoctorSettings() {
     heartRateMax: 100,
     spo2Min: 94,
     spo2Max: 100,
-    bpSystolicMin: 90,
-    bpSystolicMax: 140,
-    bpDiastolicMin: 60,
-    bpDiastolicMax: 90,
+    respirationRateMin: 12,
+    respirationRateMax: 20,
     temperatureMin: 36.0,
     temperatureMax: 38.0,
   });
@@ -59,7 +57,7 @@ export default function DoctorSettings() {
 
   // State for monitoring preferences
   const [monitoringPrefs, setMonitoringPrefs] = useState({
-    defaultVitalsPriority: ['spo2', 'heartRate', 'bloodPressure', 'temperature'],
+    defaultVitalsPriority: ['spo2', 'heartRate', 'respirationRate', 'temperature'],
     enableTrendGraphs: true,
     graphTimeRange: '24h',
     showNormalValues: false,
@@ -98,10 +96,8 @@ export default function DoctorSettings() {
         heartRateMax: 100,
         spo2Min: 94,
         spo2Max: 100,
-        bpSystolicMin: 90,
-        bpSystolicMax: 140,
-        bpDiastolicMin: 60,
-        bpDiastolicMax: 90,
+        respirationRateMin: 12,
+        respirationRateMax: 20,
         temperatureMin: 36.0,
         temperatureMax: 38.0,
       });
@@ -114,7 +110,7 @@ export default function DoctorSettings() {
         escalationMinutes: 5,
       });
       setMonitoringPrefs({
-        defaultVitalsPriority: ['spo2', 'heartRate', 'bloodPressure', 'temperature'],
+        defaultVitalsPriority: ['spo2', 'heartRate', 'respirationRate', 'temperature'],
         enableTrendGraphs: true,
         graphTimeRange: '24h',
         showNormalValues: false,
@@ -372,76 +368,42 @@ export default function DoctorSettings() {
 
                 <Separator />
 
-                {/* Blood Pressure */}
+                {/* Respiration Rate */}
                 <div className="space-y-4">
                   <h3 className="font-semibold text-sm flex items-center gap-2">
-                    <span className="h-2 w-2 bg-orange-500 rounded-full"></span>
-                    Blood Pressure (mmHg)
+                    <span className="h-2 w-2 bg-green-500 rounded-full"></span>
+                    Respiration Rate (breaths/min)
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="bpSysMin" className="text-xs font-medium">
-                        Systolic Min
+                      <Label htmlFor="rrMin" className="text-xs font-medium">
+                        Minimum
                       </Label>
                       <Input
-                        id="bpSysMin"
+                        id="rrMin"
                         type="number"
-                        value={vitalThresholds.bpSystolicMin}
+                        value={vitalThresholds.respirationRateMin}
                         onChange={(e) =>
                           setVitalThresholds({
                             ...vitalThresholds,
-                            bpSystolicMin: Number(e.target.value),
+                            respirationRateMin: Number(e.target.value),
                           })
                         }
                         className="text-sm"
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="bpSysMax" className="text-xs font-medium">
-                        Systolic Max
+                      <Label htmlFor="rrMax" className="text-xs font-medium">
+                        Maximum
                       </Label>
                       <Input
-                        id="bpSysMax"
+                        id="rrMax"
                         type="number"
-                        value={vitalThresholds.bpSystolicMax}
+                        value={vitalThresholds.respirationRateMax}
                         onChange={(e) =>
                           setVitalThresholds({
                             ...vitalThresholds,
-                            bpSystolicMax: Number(e.target.value),
-                          })
-                        }
-                        className="text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bpDiaMin" className="text-xs font-medium">
-                        Diastolic Min
-                      </Label>
-                      <Input
-                        id="bpDiaMin"
-                        type="number"
-                        value={vitalThresholds.bpDiastolicMin}
-                        onChange={(e) =>
-                          setVitalThresholds({
-                            ...vitalThresholds,
-                            bpDiastolicMin: Number(e.target.value),
-                          })
-                        }
-                        className="text-sm"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="bpDiaMax" className="text-xs font-medium">
-                        Diastolic Max
-                      </Label>
-                      <Input
-                        id="bpDiaMax"
-                        type="number"
-                        value={vitalThresholds.bpDiastolicMax}
-                        onChange={(e) =>
-                          setVitalThresholds({
-                            ...vitalThresholds,
-                            bpDiastolicMax: Number(e.target.value),
+                            respirationRateMax: Number(e.target.value),
                           })
                         }
                         className="text-sm"
@@ -789,7 +751,7 @@ export default function DoctorSettings() {
                     {[
                       { id: 'spo2', label: 'Oxygen Saturation (SpO₂)' },
                       { id: 'heartRate', label: 'Heart Rate' },
-                      { id: 'bloodPressure', label: 'Blood Pressure' },
+                      { id: 'respirationRate', label: 'Respiration Rate' },
                       { id: 'temperature', label: 'Temperature' },
                     ].map((vital) => (
                       <div

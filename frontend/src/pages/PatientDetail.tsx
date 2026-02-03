@@ -33,7 +33,7 @@ export default function PatientDetail() {
     deviceType: 'ICU Vital Monitoring Unit',
     microcontroller: 'ESP32',
     connectionStatus: Math.random() > 0.2 ? 'online' as const : 'offline' as const,
-    sensors: ['HR', 'SpO₂', 'Temp', 'BP'],
+    sensors: ['HR', 'SpO₂', 'Temp', 'RR'],
     lastUpdate: new Date(Date.now() - Math.floor(Math.random() * 5 * 60 * 1000)),
   };
 
@@ -83,8 +83,8 @@ export default function PatientDetail() {
         return value < 36 || value > 37.5 ? (value < 35 || value > 38.5 ? 'critical' : 'warning') : 'normal';
       case 'spo2':
         return value < 95 ? (value < 90 ? 'critical' : 'warning') : 'normal';
-      case 'systolic':
-        return value < 90 || value > 140 ? (value < 80 || value > 160 ? 'critical' : 'warning') : 'normal';
+      case 'respirationRate':
+        return value < 12 || value > 20 ? (value < 8 || value > 30 ? 'critical' : 'warning') : 'normal';
       default:
         return 'normal';
     }
@@ -211,12 +211,12 @@ export default function PatientDetail() {
             lastUpdated={patient.vitals.lastUpdated}
           />
           <VitalCard
-            title="Blood Pressure"
-            value={`${patient.vitals.bloodPressure.systolic}/${patient.vitals.bloodPressure.diastolic}`}
-            unit="mmHg"
-            icon={Gauge}
-            color="bp"
-            status={getVitalStatus('systolic', patient.vitals.bloodPressure.systolic)}
+            title="Respiration Rate"
+            value={patient.vitals.respirationRate}
+            unit="breaths/min"
+            icon={Wind}
+            color="rr"
+            status={getVitalStatus('respirationRate', patient.vitals.respirationRate)}
             lastUpdated={patient.vitals.lastUpdated}
           />
           <VitalCard
@@ -244,11 +244,10 @@ export default function PatientDetail() {
             unit="BPM"
           />
           <VitalChart
-            title="Blood Pressure Trend"
-            data={vitalHistory.bloodPressure}
-            color="hsl(210, 100%, 50%)"
-            unit="mmHg"
-            showBloodPressure
+            title="Respiration Rate Trend"
+            data={vitalHistory.respirationRate}
+            color="hsl(120, 100%, 40%)"
+            unit="breaths/min"
           />
           <VitalChart
             title="Temperature Trend"

@@ -110,7 +110,7 @@ export default function AdminSettings() {
   const [alertPolicies, setAlertPolicies] = useState({
     globalHeartRateAlert: true,
     globalSpO2Alert: true,
-    globalBPAlert: true,
+    globalRRAlert: true,
     globalTempAlert: true,
     autoEscalateThreshold: 5,
     emergencyCallTimeout: 2,
@@ -209,7 +209,7 @@ export default function AdminSettings() {
       setAlertPolicies({
         globalHeartRateAlert: true,
         globalSpO2Alert: true,
-        globalBPAlert: true,
+        globalRRAlert: true,
         globalTempAlert: true,
         autoEscalateThreshold: 5,
         emergencyCallTimeout: 2,
@@ -713,14 +713,14 @@ export default function AdminSettings() {
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="bpAlert" className="text-xs">
-                      Blood Pressure Alerts
+                    <Label htmlFor="rrAlert" className="text-xs">
+                      Respiration Rate Alerts
                     </Label>
                     <Switch
-                      id="bpAlert"
-                      checked={alertPolicies.globalBPAlert}
+                      id="rrAlert"
+                      checked={alertPolicies.globalRRAlert}
                       onCheckedChange={(checked) =>
-                        setAlertPolicies({ ...alertPolicies, globalBPAlert: checked })
+                        setAlertPolicies({ ...alertPolicies, globalRRAlert: checked })
                       }
                     />
                   </div>

@@ -4,14 +4,14 @@ import { Bell, Check, Filter, Trash2 } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { NotificationItem } from '@/components/dashboard/NotificationItem';
 import { Button } from '@/components/ui/button';
-import { notifications as initialNotifications, type Notification } from '@/data/mockData';
+import { useNotifications } from '@/contexts/NotificationContext';
 import { cn } from '@/lib/utils';
 
 type NotificationFilter = 'all' | 'unread' | 'critical' | 'warning' | 'info';
 
 export default function Notifications() {
   const navigate = useNavigate();
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
+  const { notifications, unreadCount, markAllAsRead, clearAll, markAsRead } = useNotifications();
   const [filter, setFilter] = useState<NotificationFilter>('all');
 
   const filteredNotifications = notifications.filter((notification) => {
@@ -19,16 +19,6 @@ export default function Notifications() {
     if (filter === 'unread') return !notification.isRead;
     return notification.type === filter;
   });
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
-  };
 
   const filterOptions: { value: NotificationFilter; label: string }[] = [
     { value: 'all', label: 'All' },
@@ -105,11 +95,7 @@ export default function Notifications() {
                       if (notification.patientId) {
                         navigate(`/patients/${notification.patientId}`);
                       }
-                      setNotifications((prev) =>
-                        prev.map((n) =>
-                          n.id === notification.id ? { ...n, isRead: true } : n
-                        )
-                      );
+                      markAsRead(notification.id);
                     }}
                   />
                 </div>

@@ -6,7 +6,7 @@ interface VitalCardProps {
   value: string | number;
   unit: string;
   icon: LucideIcon;
-  color: 'heart' | 'temp' | 'bp' | 'spo2' | 'ecg';
+  color: 'heart' | 'temp' | 'rr' | 'spo2' | 'ecg';
   status: 'normal' | 'warning' | 'critical';
   lastUpdated: string;
   animate?: boolean;
@@ -23,10 +23,10 @@ const colorConfig = {
     text: 'text-vital-temp',
     border: 'border-vital-temp/20',
   },
-  bp: {
-    bg: 'bg-vital-bp/10',
-    text: 'text-vital-bp',
-    border: 'border-vital-bp/20',
+  rr: {
+    bg: 'bg-vital-rr/10',
+    text: 'text-vital-rr',
+    border: 'border-vital-rr/20',
   },
   spo2: {
     bg: 'bg-vital-spo2/10',

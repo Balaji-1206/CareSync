@@ -88,7 +88,7 @@ export const icuBeds = [
 // Offline Sensors
 export const offlineSensors = [
   { sensorId: 'SENS-CICU-004-HR', bedId: 'CICU-004', type: 'Heart Rate', offlineSince: '15 mins ago', status: 'Offline' },
-  { sensorId: 'SENS-SICU-007-BP', bedId: 'SICU-007', type: 'Blood Pressure', offlineSince: '22 mins ago', status: 'Offline' },
+  { sensorId: 'SENS-SICU-007-RR', bedId: 'SICU-007', type: 'Respiration Rate', offlineSince: '22 mins ago', status: 'Offline' },
   { sensorId: 'SENS-RICU-007-SPO2', bedId: 'RICU-007', type: 'SpO2', offlineSince: '35 mins ago', status: 'Offline' },
   { sensorId: 'SENS-SICU-016-TEMP', bedId: 'SICU-016', type: 'Temperature', offlineSince: '2 hours ago', status: 'Maintenance' },
   { sensorId: 'SENS-RICU-016-ECG', bedId: 'RICU-016', type: 'ECG', offlineSince: '4 hours ago', status: 'Maintenance' },
@@ -110,7 +110,7 @@ export const errorLogs = [
 export const globalAlerts = [
   { id: 'ALT-001', bedId: 'CICU-002', patientId: 'P-1002', severity: 'Critical', type: 'Heart Rate', message: 'Heart rate critically high: 145 bpm', timestamp: '5 mins ago', acknowledged: false, escalated: true, assignedTo: 'Dr. Smith' },
   { id: 'ALT-002', bedId: 'RICU-003', patientId: 'P-3003', severity: 'Critical', type: 'SpO2', message: 'Oxygen saturation critically low: 86%', timestamp: '8 mins ago', acknowledged: false, escalated: true, assignedTo: 'Dr. Johnson' },
-  { id: 'ALT-003', bedId: 'SICU-005', patientId: 'P-2005', severity: 'Warning', type: 'Blood Pressure', message: 'Blood pressure elevated: 165/95 mmHg', timestamp: '12 mins ago', acknowledged: true, escalated: false, assignedTo: 'Nurse Williams' },
+  { id: 'ALT-003', bedId: 'SICU-005', patientId: 'P-2005', severity: 'Warning', type: 'Respiratory Rate', message: 'Respiratory rate elevated: 26 breaths/min', timestamp: '12 mins ago', acknowledged: true, escalated: false, assignedTo: 'Nurse Williams' },
   { id: 'ALT-004', bedId: 'CICU-008', patientId: 'P-1008', severity: 'Warning', type: 'Temperature', message: 'Temperature slightly elevated: 38.2°C', timestamp: '15 mins ago', acknowledged: true, escalated: false, assignedTo: 'Nurse Davis' },
   { id: 'ALT-005', bedId: 'RICU-006', patientId: 'P-3006', severity: 'Warning', type: 'Heart Rate', message: 'Heart rate slightly elevated: 105 bpm', timestamp: '22 mins ago', acknowledged: true, escalated: false, assignedTo: 'Nurse Brown' },
   { id: 'ALT-006', bedId: 'SICU-002', patientId: 'P-2002', severity: 'Warning', type: 'Respiratory Rate', message: 'Respiratory rate elevated: 24 bpm', timestamp: '28 mins ago', acknowledged: false, escalated: false, assignedTo: 'Nurse Martinez' },

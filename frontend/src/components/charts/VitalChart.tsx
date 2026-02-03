@@ -12,11 +12,10 @@ import { cn } from '@/lib/utils';
 
 interface VitalChartProps {
   title: string;
-  data: { time: string; value?: number; systolic?: number; diastolic?: number }[];
+  data: { time: string; value?: number }[];
   dataKey?: string;
   color: string;
   unit: string;
-  showBloodPressure?: boolean;
 }
 
 export function VitalChart({
@@ -25,7 +24,6 @@ export function VitalChart({
   dataKey = 'value',
   color,
   unit,
-  showBloodPressure = false,
 }: VitalChartProps) {
   return (
     <div className="rounded-xl bg-card p-4 shadow-md">
@@ -58,38 +56,13 @@ export function VitalChart({
                 fontSize: '12px',
               }}
             />
-            {showBloodPressure ? (
-              <>
-                <Line
-                  type="monotone"
-                  dataKey="systolic"
-                  stroke="hsl(210, 100%, 50%)"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Systolic"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="diastolic"
-                  stroke="hsl(210, 100%, 70%)"
-                  strokeWidth={2}
-                  dot={false}
-                  name="Diastolic"
-                />
-                <Legend
-                  wrapperStyle={{ fontSize: '10px' }}
-                  iconType="line"
-                />
-              </>
-            ) : (
-              <Line
-                type="monotone"
-                dataKey={dataKey}
-                stroke={color}
-                strokeWidth={2}
-                dot={false}
-              />
-            )}
+            <Line
+              type="monotone"
+              dataKey={dataKey}
+              stroke={color}
+              strokeWidth={2}
+              dot={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

@@ -72,7 +72,7 @@ export default {
         vital: {
           heart: "hsl(var(--vital-heart))",
           temp: "hsl(var(--vital-temp))",
-          bp: "hsl(var(--vital-bp))",
+          rr: "hsl(var(--vital-rr))",
           spo2: "hsl(var(--vital-spo2))",
           ecg: "hsl(var(--vital-ecg))",
         },

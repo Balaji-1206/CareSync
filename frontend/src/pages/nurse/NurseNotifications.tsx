@@ -4,7 +4,8 @@ import { Bell, Check, Filter, Trash2 } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { NotificationItem } from '@/components/dashboard/NotificationItem';
 import { Button } from '@/components/ui/button';
-import { notifications as allNotifications, type Notification, patients as allPatients, nurseAssignments } from '@/data/mockData';
+import { useNotifications } from '@/contexts/NotificationContext';
+import { patients as allPatients, nurseAssignments } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { getAuth } from '@/hooks/use-auth';
 
@@ -13,32 +14,19 @@ type NotificationFilter = 'all' | 'unread' | 'critical' | 'warning' | 'info';
 export default function NurseNotifications() {
   const navigate = useNavigate();
   const auth = getAuth();
+  const { notifications, unreadCount, markAllAsRead, clearAll, markAsRead } = useNotifications();
+  const [filter, setFilter] = useState<NotificationFilter>('all');
+  
   const assignedBedNumbers = useMemo(() => nurseAssignments[auth?.email || 'nurse@hospital.com'] || [], [auth]);
   const assignedPatients = useMemo(() => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)).map((p) => p.id), [assignedBedNumbers]);
 
-  const initialNotifications = useMemo(
-    () => allNotifications.filter((n) => !n.patientId || assignedPatients.includes(n.patientId)),
-    [assignedPatients]
-  );
-
-  const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
-  const [filter, setFilter] = useState<NotificationFilter>('all');
-
-  const filteredNotifications = notifications.filter((notification) => {
-    if (filter === 'all') return true;
-    if (filter === 'unread') return !notification.isRead;
-    return notification.type === filter;
-  });
-
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
-  const markAllAsRead = () => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-  };
-
-  const clearAll = () => {
-    setNotifications([]);
-  };
+  const filteredNotifications = notifications
+    .filter((n) => !n.patientId || assignedPatients.includes(n.patientId))
+    .filter((notification) => {
+      if (filter === 'all') return true;
+      if (filter === 'unread') return !notification.isRead;
+      return notification.type === filter;
+    });
 
   const filterOptions: { value: NotificationFilter; label: string }[] = [
     { value: 'all', label: 'All' },
@@ -109,7 +97,7 @@ export default function NurseNotifications() {
                       if (notification.patientId) {
                         navigate(`/patients/${notification.patientId}`);
                       }
-                      setNotifications((prev) => prev.map((n) => (n.id === notification.id ? { ...n, isRead: true } : n)));
+                      markAsRead(notification.id);
                     }}
                   />
                 </div>

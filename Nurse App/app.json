@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "CareSync Nurse",
+    "slug": "caresync-nurse",
+    "version": "1.0.0",
+    "sdkVersion": "54.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTabletMode": true
+    },
+    "android": {
+      "package": "com.caresync.nurse"
+    },
+    "plugins": [
+      [
+        "expo-font"
+      ]
+    ]
+  }
+}

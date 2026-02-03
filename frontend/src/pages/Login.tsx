@@ -45,7 +45,7 @@ export default function Login() {
       setLoading(false);
     }
   };
-
+  
   const handleGoogle = () => {
     window.location.href = googleOAuthUrl();
   };

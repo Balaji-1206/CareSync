@@ -13,7 +13,7 @@ export interface Patient {
   vitals: {
     heartRate: number;
     temperature: number;
-    bloodPressure: { systolic: number; diastolic: number };
+    respirationRate: number;
     spo2: number;
     lastUpdated: string;
   };
@@ -61,7 +61,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 72,
       temperature: 36.8,
-      bloodPressure: { systolic: 120, diastolic: 80 },
+      respirationRate: 16,
       spo2: 98,
       lastUpdated: new Date().toISOString(),
     },
@@ -79,7 +79,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 95,
       temperature: 37.8,
-      bloodPressure: { systolic: 140, diastolic: 90 },
+      respirationRate: 22,
       spo2: 93,
       lastUpdated: new Date().toISOString(),
     },
@@ -97,7 +97,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 110,
       temperature: 38.5,
-      bloodPressure: { systolic: 90, diastolic: 60 },
+      respirationRate: 28,
       spo2: 88,
       lastUpdated: new Date().toISOString(),
     },
@@ -115,7 +115,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 68,
       temperature: 36.5,
-      bloodPressure: { systolic: 125, diastolic: 78 },
+      respirationRate: 16,
       spo2: 97,
       lastUpdated: new Date().toISOString(),
     },
@@ -133,7 +133,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 88,
       temperature: 38.2,
-      bloodPressure: { systolic: 135, diastolic: 88 },
+      respirationRate: 24,
       spo2: 91,
       lastUpdated: new Date().toISOString(),
     },
@@ -151,7 +151,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 75,
       temperature: 36.9,
-      bloodPressure: { systolic: 118, diastolic: 76 },
+      respirationRate: 16,
       spo2: 99,
       lastUpdated: new Date().toISOString(),
     },
@@ -169,7 +169,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 125,
       temperature: 39.2,
-      bloodPressure: { systolic: 85, diastolic: 55 },
+      respirationRate: 30,
       spo2: 85,
       lastUpdated: new Date().toISOString(),
     },
@@ -187,7 +187,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 70,
       temperature: 36.7,
-      bloodPressure: { systolic: 122, diastolic: 82 },
+      respirationRate: 16,
       spo2: 96,
       lastUpdated: new Date().toISOString(),
     },
@@ -205,7 +205,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 102,
       temperature: 37.9,
-      bloodPressure: { systolic: 145, diastolic: 92 },
+      respirationRate: 26,
       spo2: 90,
       lastUpdated: new Date().toISOString(),
     },
@@ -223,7 +223,7 @@ export const patients: Patient[] = [
     vitals: {
       heartRate: 76,
       temperature: 36.6,
-      bloodPressure: { systolic: 122, diastolic: 81 },
+      respirationRate: 16,
       spo2: 99,
       lastUpdated: new Date().toISOString(),
     },
@@ -258,7 +258,7 @@ export const notifications: Notification[] = [
   {
     id: 'N002',
     type: 'critical',
-    message: 'Blood pressure critically low',
+    message: 'Respiration rate elevated above normal',
     patientId: 'P007',
     patientName: 'James Brown',
     timestamp: new Date(Date.now() - 10 * 60000).toISOString(),
@@ -396,14 +396,14 @@ export const generateVitalHistory = (hours: number = 24): {
   heartRate: { time: string; value: number }[];
   temperature: { time: string; value: number }[];
   spo2: { time: string; value: number }[];
-  bloodPressure: { time: string; systolic: number; diastolic: number }[];
+  respirationRate: { time: string; value: number }[];
 } => {
   const now = new Date();
   const data = {
     heartRate: [] as { time: string; value: number }[],
     temperature: [] as { time: string; value: number }[],
     spo2: [] as { time: string; value: number }[],
-    bloodPressure: [] as { time: string; systolic: number; diastolic: number }[],
+    respirationRate: [] as { time: string; value: number }[],
   };
 
   for (let i = hours; i >= 0; i--) {
@@ -425,10 +425,9 @@ export const generateVitalHistory = (hours: number = 24): {
       value: 95 + Math.floor(Math.random() * 5),
     });
     
-    data.bloodPressure.push({
+    data.respirationRate.push({
       time: timeStr,
-      systolic: 115 + Math.floor(Math.random() * 20),
-      diastolic: 75 + Math.floor(Math.random() * 15),
+      value: 16 + Math.floor(Math.random() * 10),
     });
   }
 

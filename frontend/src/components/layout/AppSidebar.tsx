@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { useNotifications } from '@/contexts/NotificationContext';
 
 const adminNavigation = [
   { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -59,6 +60,7 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const { setIsExpanded } = useSidebar();
+  const { unreadCount } = useNotifications();
   const location = useLocation();
   const navigation = useMemo(() => {
     const auth = getAuth();
@@ -160,9 +162,9 @@ export function AppSidebar({ onLogout }: AppSidebarProps) {
             >
               <item.icon className={cn('h-5 w-5 flex-shrink-0', isActive && 'animate-scale-in')} />
               {!isCollapsed && <span>{item.name}</span>}
-              {item.name === 'Notifications' && !isCollapsed && (
+              {item.name === 'Notifications' && !isCollapsed && unreadCount > 0 && (
                 <span className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground">
-                  3
+                  {unreadCount}
                 </span>
               )}
             </NavLink>
