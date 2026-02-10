@@ -15,7 +15,6 @@ const LoginScreen = () => {
 
   const handleLogin = async () => {
     setIsLoading(true);
-    // Auto-login with nurse credentials
     const result = await signIn('nurse@hospital.com', 'Nurse123');
 
     if (!result.success) {
