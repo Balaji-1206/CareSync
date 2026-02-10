@@ -8,7 +8,7 @@ interface VitalCardProps {
   icon: LucideIcon;
   color: 'heart' | 'temp' | 'rr' | 'spo2' | 'ecg';
   status: 'normal' | 'warning' | 'critical';
-  lastUpdated: string;
+  lastUpdated?: string;
   animate?: boolean;
 }
 
@@ -51,6 +51,9 @@ export function VitalCard({
   animate = false,
 }: VitalCardProps) {
   const config = colorConfig[color];
+  const lastUpdatedText = lastUpdated
+    ? new Date(lastUpdated).toLocaleTimeString()
+    : '—';
 
   return (
     <div
@@ -86,7 +89,7 @@ export function VitalCard({
 
       {/* Last Updated */}
       <p className="mt-2 text-xs text-muted-foreground/60">
-        Updated {new Date(lastUpdated).toLocaleTimeString()}
+        Updated {lastUpdatedText}
       </p>
     </div>
   );

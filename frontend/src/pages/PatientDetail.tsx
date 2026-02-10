@@ -20,33 +20,118 @@ import { VitalCard } from '@/components/dashboard/VitalCard';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { ECGChart } from '@/components/charts/ECGChart';
 import { VitalChart } from '@/components/charts/VitalChart';
-import { patients, generateVitalHistory } from '@/data/mockData';
+import { getPatients, generateVitalHistory } from '@/data/mockData';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { api } from '@/lib/api';
 
 export default function PatientDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [vitalHistory, setVitalHistory] = useState(generateVitalHistory(24));
-  const deviceInfo = {
-    deviceId: `DEV-${id ?? 'UNKNOWN'}`,
-    deviceType: 'ICU Vital Monitoring Unit',
-    microcontroller: 'ESP32',
-    connectionStatus: Math.random() > 0.2 ? 'online' as const : 'offline' as const,
-    sensors: ['HR', 'SpO₂', 'Temp', 'RR'],
-    lastUpdate: new Date(Date.now() - Math.floor(Math.random() * 5 * 60 * 1000)),
-  };
-
+  const [liveVitals, setLiveVitals] = useState<
+    | {
+        heartRate: number;
+        temperature: number;
+        respirationRate: number;
+        spo2: number;
+        lastUpdated: string;
+      }
+    | null
+  >(null);
+  const patients = getPatients();
   const patient = patients.find((p) => p.id === id);
 
+  // Fetch real vitals history for P001
   useEffect(() => {
-    // Simulate real-time data updates
-    const interval = setInterval(() => {
-      setVitalHistory(generateVitalHistory(24));
-    }, 30000);
+    if (id !== 'P001') {
+      // For non-P001 patients, use mock history
+      const interval = setInterval(() => {
+        setVitalHistory(generateVitalHistory(24));
+      }, 30000);
+      return () => clearInterval(interval);
+    }
 
+    // For P001, fetch real vitals from history endpoint
+    const fetchRealVitalsHistory = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/vitals/history/P001?limit=100`);
+        const result = await response.json();
+
+        if (result.success && result.data && Array.isArray(result.data)) {
+          // Transform backend data to chart format
+          const chartData = result.data
+            .reverse() // Reverse to get chronological order
+            .map((entry: any) => {
+              const timestamp = new Date(entry.recordedAt);
+              const timeStr = timestamp.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+              });
+
+              return {
+                time: timeStr,
+                hr: entry.vitals?.HR?.value || 0,
+                spo2: entry.vitals?.SpO2?.value || 0,
+                temp: entry.vitals?.Temp?.value || 0,
+                rr: entry.vitals?.RR?.value || 0
+              };
+            });
+
+          setVitalHistory({
+            heartRate: chartData.map(d => ({ time: d.time, value: d.hr })),
+            respirationRate: chartData.map(d => ({ time: d.time, value: d.rr })),
+            temperature: chartData.map(d => ({ time: d.time, value: d.temp })),
+            spo2: chartData.map(d => ({ time: d.time, value: d.spo2 }))
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching vitals history:', error);
+      }
+    };
+
+    fetchRealVitalsHistory();
+
+    // Refetch history every 30 seconds for updates
+    const interval = setInterval(fetchRealVitalsHistory, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    if (id !== 'P001') return;
+
+    let isActive = true;
+
+    const fetchVitals = async () => {
+      try {
+        await fetch(`${api.baseUrl}/api/vitals/external/p001`);
+
+        const latestRes = await fetch(`${api.baseUrl}/api/vitals/latest/P001`);
+        const latest = await latestRes.json();
+
+        if (!isActive || !latest?.success || !latest?.data) return;
+
+        setLiveVitals({
+          heartRate: latest.data.HR?.value ?? 0,
+          temperature: latest.data.Temp?.value ?? 0,
+          respirationRate: latest.data.RR?.value ?? 0,
+          spo2: latest.data.SpO2?.value ?? 0,
+          lastUpdated: latest.data.HR?.time || latest.timestamp || new Date().toISOString(),
+        });
+      } catch (error) {
+        console.error('Failed to fetch external vitals', error);
+      }
+    };
+
+    fetchVitals();
+    const interval = setInterval(fetchVitals, 10000);
+    return () => {
+      isActive = false;
+      clearInterval(interval);
+    };
+  }, [id]);
 
   if (!patient) {
     return (
@@ -62,6 +147,22 @@ export default function PatientDetail() {
       </MainLayout>
     );
   }
+
+  const deviceInfo = {
+    deviceId: patient.device?.deviceId ?? `DEV-${id ?? 'UNKNOWN'}`,
+    deviceType: patient.device?.deviceType ?? 'ICU Vital Monitoring Unit',
+    microcontroller: 'ESP32',
+    connectionStatus: patient.device?.connectionStatus ?? (Math.random() > 0.2 ? 'online' as const : 'offline' as const),
+    sensors: patient.device?.sensors ?? ['HR', 'SpO₂', 'Temp', 'RR'],
+    lastUpdate: patient.device?.lastUpdate
+      ? new Date(patient.device.lastUpdate)
+      : new Date(Date.now() - Math.floor(Math.random() * 5 * 60 * 1000)),
+  };
+
+  const vitals = liveVitals || patient.vitals;
+  const lastUpdatedLabel = vitals?.lastUpdated
+    ? new Date(vitals.lastUpdated).toLocaleTimeString()
+    : '—';
 
   const formatDuration = (ms: number) => {
     const totalMinutes = Math.floor(ms / (1000 * 60));
@@ -193,40 +294,40 @@ export default function PatientDetail() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
           <VitalCard
             title="Heart Rate"
-            value={patient.vitals.heartRate}
+            value={vitals?.heartRate ?? '—'}
             unit="BPM"
             icon={Heart}
             color="heart"
-            status={getVitalStatus('heartRate', patient.vitals.heartRate)}
-            lastUpdated={patient.vitals.lastUpdated}
+            status={vitals ? getVitalStatus('heartRate', vitals.heartRate) : 'normal'}
+            lastUpdated={vitals?.lastUpdated}
             animate
           />
           <VitalCard
             title="Temperature"
-            value={patient.vitals.temperature.toFixed(1)}
+            value={vitals ? vitals.temperature.toFixed(1) : '—'}
             unit="°C"
             icon={Thermometer}
             color="temp"
-            status={getVitalStatus('temperature', patient.vitals.temperature)}
-            lastUpdated={patient.vitals.lastUpdated}
+            status={vitals ? getVitalStatus('temperature', vitals.temperature) : 'normal'}
+            lastUpdated={vitals?.lastUpdated}
           />
           <VitalCard
             title="Respiration Rate"
-            value={patient.vitals.respirationRate}
+            value={vitals?.respirationRate ?? '—'}
             unit="breaths/min"
             icon={Wind}
             color="rr"
-            status={getVitalStatus('respirationRate', patient.vitals.respirationRate)}
-            lastUpdated={patient.vitals.lastUpdated}
+            status={vitals ? getVitalStatus('respirationRate', vitals.respirationRate) : 'normal'}
+            lastUpdated={vitals?.lastUpdated}
           />
           <VitalCard
             title="Oxygen Saturation"
-            value={patient.vitals.spo2}
+            value={vitals?.spo2 ?? '—'}
             unit="%"
             icon={Wind}
             color="spo2"
-            status={getVitalStatus('spo2', patient.vitals.spo2)}
-            lastUpdated={patient.vitals.lastUpdated}
+            status={vitals ? getVitalStatus('spo2', vitals.spo2) : 'normal'}
+            lastUpdated={vitals?.lastUpdated}
           />
         </div>
 
@@ -304,7 +405,7 @@ export default function PatientDetail() {
               <div>
                 <p className="text-xs text-muted-foreground">Last Update</p>
                 <p className="text-sm font-medium">
-                  {new Date(patient.vitals.lastUpdated).toLocaleTimeString()}
+                  {lastUpdatedLabel}
                 </p>
               </div>
             </div>

@@ -13,11 +13,13 @@ import { StatCard } from '@/components/dashboard/StatCard';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { NotificationItem } from '@/components/dashboard/NotificationItem';
 import { BedStatusCard } from '@/components/dashboard/BedStatusCard';
-import { patients, icuBeds, notifications } from '@/data/mockData';
+import { getPatients, getIcuBeds, notifications } from '@/data/mockData';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
+  const patients = getPatients();
+  const icuBeds = getIcuBeds();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -148,7 +150,7 @@ export default function Dashboard() {
                       <div className="text-right">
                         <StatusBadge status="critical" showPulse />
                         <p className="mt-1 text-xs text-muted-foreground">
-                          SpO₂: {patient.vitals.spo2}%
+                          SpO₂: {patient.vitals?.spo2 ?? '—'}{patient.vitals ? '%' : ''}
                         </p>
                       </div>
                     </div>

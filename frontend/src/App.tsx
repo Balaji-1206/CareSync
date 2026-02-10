@@ -11,6 +11,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/doctor/Dashboard";
 import Patients from "./pages/doctor/Patients";
 import PatientDetail from "./pages/PatientDetail";
+import AddDevice from "./pages/AddDevice";
 import Beds from "./pages/doctor/Beds";
 import Notifications from "./pages/doctor/Notifications";
 import Settings from "./pages/Settings";
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/patients" element={<Patients />} />
           <Route path="/patients/:id" element={<PatientDetail />} />
+          <Route path="/devices/add" element={<AddDevice />} />
           <Route path="/beds" element={<Beds />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/settings" element={<Settings />} />

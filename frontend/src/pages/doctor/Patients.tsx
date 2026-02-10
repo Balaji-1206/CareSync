@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Filter, ChevronRight, Battery, BatteryLow, BatteryMedium, BatteryFull } from 'lucide-react';
+import { Search, Filter, ChevronRight, Battery, BatteryLow, BatteryMedium, BatteryFull, Plus } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { patients, type PatientStatus } from '@/data/mockData';
+import { getPatients, type PatientStatus } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 
 export default function Patients() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<PatientStatus | 'all'>('all');
+  const patients = getPatients();
 
   const getBatteryIcon = (battery: number) => {
     if (battery >= 80) return BatteryFull;
@@ -47,11 +49,17 @@ export default function Patients() {
     <MainLayout>
       <div className="p-4 lg:p-8 pt-16 lg:pt-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-foreground">Patient List</h1>
-          <p className="text-muted-foreground mt-1">
-            Manage and monitor all ICU patients
-          </p>
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Patient List</h1>
+            <p className="text-muted-foreground mt-1">
+              Manage and monitor all ICU patients
+            </p>
+          </div>
+          <Button onClick={() => navigate('/devices/add')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Add Device
+          </Button>
         </div>
 
         {/* Search and Filters */}
@@ -197,15 +205,15 @@ export default function Patients() {
                       <div className="flex items-center gap-4 text-xs">
                         <div>
                           <span className="text-muted-foreground">HR: </span>
-                          <span className="font-mono font-medium">{patient.vitals.heartRate}</span>
+                          <span className="font-mono font-medium">{patient.vitals?.heartRate ?? '—'}</span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">SpO₂: </span>
-                          <span className="font-mono font-medium">{patient.vitals.spo2}%</span>
+                          <span className="font-mono font-medium">{patient.vitals?.spo2 ?? '—'}{patient.vitals ? '%' : ''}</span>
                         </div>
                         <div>
                           <span className="text-muted-foreground">Temp: </span>
-                          <span className="font-mono font-medium">{patient.vitals.temperature.toFixed(1)}°C</span>
+                          <span className="font-mono font-medium">{patient.vitals ? `${patient.vitals.temperature.toFixed(1)}°C` : '—'}</span>
                         </div>
                       </div>
                     </td>

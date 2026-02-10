@@ -4,7 +4,7 @@ import { Search, Filter, ChevronRight, Battery, BatteryLow, BatteryMedium, Batte
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Input } from '@/components/ui/input';
 import { StatusBadge } from '@/components/ui/status-badge';
-import { patients as allPatients, type PatientStatus, nurseAssignments } from '@/data/mockData';
+import { getPatients, type PatientStatus, nurseAssignments } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { getAuth } from '@/hooks/use-auth';
 
@@ -13,6 +13,7 @@ export default function NursePatients() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<PatientStatus | 'all'>('all');
   const auth = getAuth();
+  const allPatients = getPatients();
 
   const getBatteryIcon = (battery: number) => {
     if (battery >= 80) return BatteryFull;
@@ -28,7 +29,10 @@ export default function NursePatients() {
   };
 
   const assignedBedNumbers = useMemo(() => nurseAssignments[auth?.email || 'nurse@hospital.com'] || [], [auth]);
-  const patients = useMemo(() => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)), [assignedBedNumbers]);
+  const patients = useMemo(
+    () => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)),
+    [allPatients, assignedBedNumbers]
+  );
 
   const filteredPatients = patients.filter((patient) => {
     const matchesSearch =
@@ -158,9 +162,9 @@ export default function NursePatients() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4 text-xs">
-                        <div><span className="text-muted-foreground">HR: </span><span className="font-mono font-medium">{patient.vitals.heartRate}</span></div>
-                        <div><span className="text-muted-foreground">SpO₂: </span><span className="font-mono font-medium">{patient.vitals.spo2}%</span></div>
-                        <div><span className="text-muted-foreground">Temp: </span><span className="font-mono font-medium">{patient.vitals.temperature.toFixed(1)}°C</span></div>
+                        <div><span className="text-muted-foreground">HR: </span><span className="font-mono font-medium">{patient.vitals?.heartRate ?? '—'}</span></div>
+                        <div><span className="text-muted-foreground">SpO₂: </span><span className="font-mono font-medium">{patient.vitals?.spo2 ?? '—'}{patient.vitals ? '%' : ''}</span></div>
+                        <div><span className="text-muted-foreground">Temp: </span><span className="font-mono font-medium">{patient.vitals ? `${patient.vitals.temperature.toFixed(1)}°C` : '—'}</span></div>
                       </div>
                     </td>
                     <td className="px-6 py-4"><ChevronRight className="h-5 w-5 text-muted-foreground" /></td>

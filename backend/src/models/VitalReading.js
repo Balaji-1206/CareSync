@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 const vitalReadingSchema = new mongoose.Schema({
   patientId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    type: String,
     required: [true, 'Patient ID is required'],
     index: true
   },

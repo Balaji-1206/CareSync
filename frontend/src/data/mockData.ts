@@ -10,7 +10,14 @@ export interface Patient {
   admissionDate: string;
   diagnosis: string;
   deviceBattery?: number; // Battery percentage (0-100)
-  vitals: {
+  device?: {
+    deviceId: string;
+    deviceType: string;
+    connectionStatus: 'online' | 'offline';
+    sensors: string[];
+    lastUpdate?: string;
+  };
+  vitals?: {
     heartRate: number;
     temperature: number;
     respirationRate: number;
@@ -58,13 +65,6 @@ export const patients: Patient[] = [
     admissionDate: '2024-01-10',
     diagnosis: 'Post-cardiac surgery recovery',
     deviceBattery: 85,
-    vitals: {
-      heartRate: 72,
-      temperature: 36.8,
-      respirationRate: 16,
-      spo2: 98,
-      lastUpdated: new Date().toISOString(),
-    },
   },
   {
     id: 'P002',
@@ -244,6 +244,59 @@ export const icuBeds: ICUBed[] = [
   { id: 'B011', bedNumber: 'ICU-111', isOccupied: false, ward: 'Surgical ICU' },
   { id: 'B012', bedNumber: 'ICU-112', isOccupied: false, ward: 'Neuro ICU' },
 ];
+
+const PATIENTS_STORAGE_KEY = 'caresync.patients.v1';
+const BEDS_STORAGE_KEY = 'caresync.beds.v1';
+
+const readStorage = <T>(key: string, fallback: T): T => {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return fallback;
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+};
+
+const writeStorage = <T>(key: string, value: T) => {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(key, JSON.stringify(value));
+};
+
+export const getPatients = (): Patient[] => {
+  const stored = readStorage<Patient[]>(PATIENTS_STORAGE_KEY, []);
+  const merged = new Map<string, Patient>();
+  patients.forEach((patient) => merged.set(patient.id, patient));
+  stored.forEach((patient) => merged.set(patient.id, patient));
+  return Array.from(merged.values());
+};
+
+export const addPatient = (patient: Patient) => {
+  const stored = readStorage<Patient[]>(PATIENTS_STORAGE_KEY, []);
+  const next = [...stored.filter((p) => p.id !== patient.id), patient];
+  writeStorage(PATIENTS_STORAGE_KEY, next);
+  return patient;
+};
+
+export const getIcuBeds = (): ICUBed[] => {
+  const stored = readStorage<ICUBed[]>(BEDS_STORAGE_KEY, []);
+  return stored.length > 0 ? stored : icuBeds;
+};
+
+export const setIcuBeds = (beds: ICUBed[]) => {
+  writeStorage(BEDS_STORAGE_KEY, beds);
+};
+
+export const upsertBed = (bed: ICUBed) => {
+  const beds = getIcuBeds();
+  const index = beds.findIndex((b) => b.bedNumber === bed.bedNumber);
+  const next = index >= 0
+    ? beds.map((b) => (b.bedNumber === bed.bedNumber ? { ...b, ...bed } : b))
+    : [...beds, bed];
+  setIcuBeds(next);
+  return next;
+};
 
 export const notifications: Notification[] = [
   {

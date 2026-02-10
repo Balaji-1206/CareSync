@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BedDouble, User, Filter } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { patients as allPatients, icuBeds as allBeds, nurseAssignments } from '@/data/mockData';
+import { getPatients, getIcuBeds, nurseAssignments } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from '@/components/ui/status-badge';
 import { getAuth } from '@/hooks/use-auth';
@@ -11,10 +11,18 @@ export default function NurseBeds() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'occupied' | 'available'>('all');
   const auth = getAuth();
+  const allPatients = getPatients();
+  const allBeds = getIcuBeds();
   const assignedBedNumbers = useMemo(() => nurseAssignments[auth?.email || 'nurse@hospital.com'] || [], [auth]);
 
-  const icuBeds = useMemo(() => allBeds.filter((b) => assignedBedNumbers.includes(b.bedNumber)), [assignedBedNumbers]);
-  const patients = useMemo(() => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)), [assignedBedNumbers]);
+  const icuBeds = useMemo(
+    () => allBeds.filter((b) => assignedBedNumbers.includes(b.bedNumber)),
+    [allBeds, assignedBedNumbers]
+  );
+  const patients = useMemo(
+    () => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)),
+    [allPatients, assignedBedNumbers]
+  );
 
   const filteredBeds = icuBeds.filter((bed) => {
     if (filter === 'all') return true;
@@ -132,8 +140,8 @@ export default function NurseBeds() {
                     </div>
                     <p className="text-xs text-muted-foreground mb-2">{patient.diagnosis}</p>
                     <div className="flex items-center gap-3 text-xs">
-                      <span className="text-muted-foreground">HR: <span className="font-mono font-medium">{patient.vitals.heartRate}</span></span>
-                      <span className="text-muted-foreground">SpO₂: <span className="font-mono font-medium">{patient.vitals.spo2}%</span></span>
+                      <span className="text-muted-foreground">HR: <span className="font-mono font-medium">{patient.vitals?.heartRate ?? '—'}</span></span>
+                      <span className="text-muted-foreground">SpO₂: <span className="font-mono font-medium">{patient.vitals?.spo2 ?? '—'}{patient.vitals ? '%' : ''}</span></span>
                     </div>
                   </div>
                 ) : (

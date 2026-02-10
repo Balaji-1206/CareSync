@@ -4,7 +4,9 @@ const {
   receiveVitalData,
   getLatestVitals,
   getEWSStatus,
-  getVitalHistory
+  getVitalHistory,
+  getExternalVitalsP001,
+  getMockVitalsP001
 } = require('../controllers/vitalsController');
 
 /**
@@ -41,5 +43,17 @@ router.get('/ews-status/:patientId', getEWSStatus);
  * Get historical vital readings
  */
 router.get('/history/:patientId', getVitalHistory);
+
+/**
+ * GET /api/vitals/external/p001
+ * Fetch external vitals for patient P001
+ */
+router.get('/external/p001', getExternalVitalsP001);
+
+/**
+ * GET /api/vitals/mock/p001
+ * Mock external vitals payload
+ */
+router.get('/mock/p001', getMockVitalsP001);
 
 module.exports = router;

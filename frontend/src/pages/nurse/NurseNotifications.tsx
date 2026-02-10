@@ -5,7 +5,7 @@ import { MainLayout } from '@/components/layout/MainLayout';
 import { NotificationItem } from '@/components/dashboard/NotificationItem';
 import { Button } from '@/components/ui/button';
 import { useNotifications } from '@/contexts/NotificationContext';
-import { patients as allPatients, nurseAssignments } from '@/data/mockData';
+import { getPatients, nurseAssignments } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { getAuth } from '@/hooks/use-auth';
 
@@ -16,9 +16,13 @@ export default function NurseNotifications() {
   const auth = getAuth();
   const { notifications, unreadCount, markAllAsRead, clearAll, markAsRead } = useNotifications();
   const [filter, setFilter] = useState<NotificationFilter>('all');
+  const allPatients = getPatients();
   
   const assignedBedNumbers = useMemo(() => nurseAssignments[auth?.email || 'nurse@hospital.com'] || [], [auth]);
-  const assignedPatients = useMemo(() => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)).map((p) => p.id), [assignedBedNumbers]);
+  const assignedPatients = useMemo(
+    () => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)).map((p) => p.id),
+    [allPatients, assignedBedNumbers]
+  );
 
   const filteredNotifications = notifications
     .filter((n) => !n.patientId || assignedPatients.includes(n.patientId))

@@ -388,6 +388,119 @@ const getVitalHistory = async (req, res) => {
 };
 
 /**
+ * GET /api/vitals/external/p001
+ * Fetch external sensor data for P001 using API key
+ */
+const getExternalVitalsP001 = async (req, res) => {
+  try {
+    const apiUrl = process.env.P001_VITALS_API_URL;
+    const apiKey = process.env.P001_VITALS_API_KEY;
+
+    if (!apiUrl || !apiKey) {
+      return res.status(500).json({
+        success: false,
+        message: 'Missing P001_VITALS_API_URL or P001_VITALS_API_KEY'
+      });
+    }
+
+    const response = await fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'x-api-key': apiKey
+      }
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      return res.status(response.status).json({
+        success: false,
+        message: 'Failed to fetch external vitals',
+        details: text
+      });
+    }
+
+    const payload = await response.json();
+    const { device_id, timestamp, hr, spo2, temp, rr, ecg } = payload || {};
+
+    if (!device_id || !timestamp || typeof hr !== 'number' || typeof spo2 !== 'number' || typeof temp !== 'number' || typeof rr !== 'number') {
+      return res.status(422).json({
+        success: false,
+        message: 'Invalid payload from external source',
+        payload
+      });
+    }
+
+    const vitals = {
+      HR: { value: hr, time: new Date(timestamp) },
+      SpO2: { value: spo2, time: new Date(timestamp) },
+      Temp: { value: temp, time: new Date(timestamp) },
+      RR: { value: rr, time: new Date(timestamp) },
+      Fall: { value: 0, time: new Date(timestamp) }
+    };
+
+    if (typeof ecg === 'number') {
+      vitals.ECG = { value: ecg, time: new Date(timestamp) };
+    }
+
+    vitalCache.updateCache('P001', vitals);
+
+    // Trigger EWS calculation and database save
+    await calculateAndSaveEWS('P001');
+
+    res.json({
+      success: true,
+      patientId: 'P001',
+      deviceId: device_id,
+      timestamp,
+      vitals,
+      ecg: typeof ecg === 'number' ? ecg : null
+    });
+  } catch (error) {
+    console.error('[External Vitals Error]', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch external vitals',
+      error: error.message
+    });
+  }
+};
+
+/**
+ * GET /api/vitals/mock/p001
+ * Mock external vitals payload for testing API key flow
+ */
+const getMockVitalsP001 = (req, res) => {
+  const apiKey = process.env.P001_VITALS_API_KEY;
+  const headerKey = req.headers['x-api-key'] || req.headers.authorization?.replace('Bearer ', '');
+
+  if (!apiKey || headerKey !== apiKey) {
+    return res.status(401).json({
+      success: false,
+      message: 'Invalid API key'
+    });
+  }
+
+  const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+  const jitter = (base, variance) => base + (Math.random() * variance * 2 - variance);
+
+  const hr = Math.round(clamp(jitter(82, 6), 55, 130));
+  const spo2 = Math.round(clamp(jitter(97, 2), 88, 100));
+  const temp = Number(clamp(jitter(36.8, 0.4), 35.5, 39.5).toFixed(1));
+  const rr = Math.round(clamp(jitter(18, 3), 10, 30));
+  const ecg = Math.round(clamp(jitter(2345, 200), 1500, 3200));
+
+  res.json({
+    device_id: 'ESP32_001',
+    timestamp: new Date().toISOString(),
+    hr,
+    spo2,
+    temp,
+    rr,
+    ecg
+  });
+};
+
+/**
  * Cleanup: Stop timer for a patient
  */
 function stopEWSTimer(patientId) {
@@ -404,6 +517,8 @@ module.exports = {
   getLatestVitals,
   getEWSStatus,
   getVitalHistory,
+  getExternalVitalsP001,
+  getMockVitalsP001,
   stopEWSTimer,
   startEWSTimer
 };

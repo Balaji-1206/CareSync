@@ -40,7 +40,7 @@ class VitalCache {
       SpO2: this.cache[patientId].SpO2,
       Temp: this.cache[patientId].Temp,
       RR: this.cache[patientId].RR,
-      Fall: this.cache[patientId].Fall
+      ECG: this.cache[patientId].ECG
     });
   }
 

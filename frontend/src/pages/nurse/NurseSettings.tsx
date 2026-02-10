@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { getAuth } from '@/hooks/use-auth';
-import { nurseProfiles, nurseAssignments, patients } from '@/data/mockData';
+import { nurseProfiles, nurseAssignments, getPatients } from '@/data/mockData';
 import { MainLayout } from '@/components/layout/MainLayout';
 import ChangePasswordSection from '@/components/ChangePasswordSection';
 
@@ -17,7 +17,7 @@ export default function NurseSettings() {
   const nurseProfile = nurseProfiles.find((p) => p.email === auth?.email) || nurseProfiles[0];
   
   const assignedBedNumbers = nurseAssignments[auth?.email || 'nurse@hospital.com'] || [];
-  const assignedPatients = patients.filter((p) => assignedBedNumbers.includes(p.bedNumber));
+  const assignedPatients = getPatients().filter((p) => assignedBedNumbers.includes(p.bedNumber));
 
   // State for all settings
   const [isEditingProfile, setIsEditingProfile] = useState(false);

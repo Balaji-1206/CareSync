@@ -17,12 +17,6 @@ const ASSIGNED_PATIENTS = [
     name: 'John Smith',
     bedNumber: 'ICU-101',
     status: 'normal',
-    vitals: {
-      heartRate: 72,
-      temperature: 36.8,
-      respirationRate: 16,
-      spo2: 98,
-    },
     lastUpdated: new Date(),
   },
   {
@@ -93,7 +87,9 @@ const NurseDashboardScreen = ({ navigation }) => {
     }
   };
 
-  const renderPatientCard = ({ item }) => (
+  const renderPatientCard = ({ item }) => {
+    const vitals = item.vitals;
+    return (
     <TouchableOpacity
       style={styles.patientCard}
       onPress={() =>
@@ -121,27 +117,28 @@ const NurseDashboardScreen = ({ navigation }) => {
       <View style={styles.vitalsRow}>
         <View style={styles.vitalItem}>
           <Text style={styles.vitalLabel}>HR</Text>
-          <Text style={styles.vitalValue}>{item.vitals.heartRate}</Text>
+          <Text style={styles.vitalValue}>{vitals ? vitals.heartRate : '—'}</Text>
           <Text style={styles.vitalUnit}>bpm</Text>
         </View>
         <View style={styles.vitalItem}>
           <Text style={styles.vitalLabel}>SpO₂</Text>
-          <Text style={styles.vitalValue}>{item.vitals.spo2}</Text>
-          <Text style={styles.vitalUnit}>%</Text>
+          <Text style={styles.vitalValue}>{vitals ? vitals.spo2 : '—'}</Text>
+          <Text style={styles.vitalUnit}>{vitals ? '%' : ''}</Text>
         </View>
         <View style={styles.vitalItem}>
           <Text style={styles.vitalLabel}>Temp</Text>
-          <Text style={styles.vitalValue}>{item.vitals.temperature}</Text>
-          <Text style={styles.vitalUnit}>°C</Text>
+          <Text style={styles.vitalValue}>{vitals ? vitals.temperature : '—'}</Text>
+          <Text style={styles.vitalUnit}>{vitals ? '°C' : ''}</Text>
         </View>
         <View style={styles.vitalItem}>
           <Text style={styles.vitalLabel}>RR</Text>
-          <Text style={styles.vitalValue}>{item.vitals.respirationRate}</Text>
-          <Text style={styles.vitalUnit}>br/min</Text>
+          <Text style={styles.vitalValue}>{vitals ? vitals.respirationRate : '—'}</Text>
+          <Text style={styles.vitalUnit}>{vitals ? 'br/min' : ''}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
+  };
 
   return (
     <View style={styles.container}>

@@ -19,8 +19,8 @@ import { StatusBadge } from '@/components/ui/status-badge';
 import { NotificationItem } from '@/components/dashboard/NotificationItem';
 import { BedStatusCard } from '@/components/dashboard/BedStatusCard';
 import {
-  patients as allPatients,
-  icuBeds as allBeds,
+  getPatients,
+  getIcuBeds,
   notifications as allNotifications,
   nurseAssignments,
   nurseTasks,
@@ -31,6 +31,8 @@ export default function NurseDashboard() {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const auth = getAuth();
+  const allPatients = getPatients();
+  const allBeds = getIcuBeds();
 
   /* ---------------- BATTERY HELPERS ---------------- */
 
@@ -63,12 +65,12 @@ export default function NurseDashboard() {
 
   const icuBeds = useMemo(
     () => allBeds.filter((b) => assignedBedNumbers.includes(b.bedNumber)),
-    [assignedBedNumbers]
+    [allBeds, assignedBedNumbers]
   );
 
   const patients = useMemo(
     () => allPatients.filter((p) => assignedBedNumbers.includes(p.bedNumber)),
-    [assignedBedNumbers]
+    [allPatients, assignedBedNumbers]
   );
 
   const notifications = useMemo(
@@ -200,7 +202,7 @@ export default function NurseDashboard() {
                         <div className="text-right">
                           <StatusBadge status="critical" showPulse />
                           <p className="text-xs text-muted-foreground mt-1">
-                            SpO₂: {patient.vitals.spo2}%
+                            SpO₂: {patient.vitals?.spo2 ?? '—'}{patient.vitals ? '%' : ''}
                           </p>
                         </div>
                       </div>

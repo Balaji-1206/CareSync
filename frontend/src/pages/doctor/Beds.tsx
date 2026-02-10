@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BedDouble, User, Filter } from 'lucide-react';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { patients, icuBeds } from '@/data/mockData';
+import { getPatients, getIcuBeds } from '@/data/mockData';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from '@/components/ui/status-badge';
 export default function Beds() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'occupied' | 'available'>('all');
+  const patients = getPatients();
+  const icuBeds = getIcuBeds();
 
   const filteredBeds = icuBeds.filter((bed) => {
     if (filter === 'all') return true;
@@ -150,10 +152,10 @@ export default function Beds() {
                     <p className="text-xs text-muted-foreground mb-2">{patient.diagnosis}</p>
                     <div className="flex items-center gap-3 text-xs">
                       <span className="text-muted-foreground">
-                        HR: <span className="font-mono font-medium">{patient.vitals.heartRate}</span>
+                        HR: <span className="font-mono font-medium">{patient.vitals?.heartRate ?? '—'}</span>
                       </span>
                       <span className="text-muted-foreground">
-                        SpO₂: <span className="font-mono font-medium">{patient.vitals.spo2}%</span>
+                        SpO₂: <span className="font-mono font-medium">{patient.vitals?.spo2 ?? '—'}{patient.vitals ? '%' : ''}</span>
                       </span>
                     </div>
                   </div>

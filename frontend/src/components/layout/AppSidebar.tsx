@@ -8,6 +8,7 @@ import {
   Settings,
   LogOut,
   Activity,
+  Cpu,
   Menu,
   X,
   Heart,
@@ -35,6 +36,7 @@ const adminNavigation = [
 const doctorNavigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Patients', href: '/patients', icon: Users },
+  { name: 'Add Device', href: '/devices/add', icon: Cpu },
   { name: 'ICU Beds', href: '/beds', icon: BedDouble },
   { name: 'Notifications', href: '/notifications', icon: Bell },
   { name: 'Settings', href: '/doctor/settings', icon: Settings },
@@ -43,6 +45,7 @@ const doctorNavigation = [
 const nurseNavigation = [
   { name: 'Dashboard', href: '/nurse/dashboard', icon: LayoutDashboard },
   { name: 'Patients', href: '/nurse/patients', icon: Users },
+  { name: 'Add Device', href: '/devices/add', icon: Cpu },
   { name: 'ICU Beds', href: '/nurse/beds', icon: BedDouble },
   { name: 'Notifications', href: '/nurse/notifications', icon: Bell },
   { name: 'Settings', href: '/nurse/settings', icon: Settings },
